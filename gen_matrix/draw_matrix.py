@@ -3,7 +3,7 @@ import turtle
 import os
 from PIL import Image
 from random import randint
-
+import csv 
 
 # function to draw matrix with red and black dots - draws both half and the complete matrix
 # canvas_dim --> width and height (px) of a square canvas, make sure it is divisible by matrix_dim
@@ -167,27 +167,26 @@ def draw(canvas_dim, matrix_dim, p, save_path, file_name_shell, top_half):
    
     
     detail_dict = {"half_position": "top" if draw_top == True else "bottom", "half red": red_half, "total red": red_total}
+    # for testing purposes
     print(detail_dict)
     print("turtles after drawing: ", screen.turtles())
 
     # delete all drawings and turtles 
     screen.clearscreen()
-
     return detail_dict
 
 
 
 
+# testing code
 
+# draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half= True)
 
-draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half= True)
+# draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half= True)
 
+# draw(canvas_dim= 400, matrix_dim= 20, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half=False)
 
-draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half= True)
-
-draw(canvas_dim= 400, matrix_dim= 20, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half=False)
-
-draw(canvas_dim= 400, matrix_dim= 20, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half=False)
+# draw(canvas_dim= 400, matrix_dim= 20, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half=False)
 
 
 
@@ -221,36 +220,55 @@ def draw_n_pairs(canvas_dim, matrix_dim, n, p):
     nred_overall = []
     # draw matrix pairs
     for pairindex in range(n):
-        # coin flip for top or bottom half
-        top_half = True if randint(1, 100) <= 50 else False
+        # coin flip for top or bottom half for current pair
+        top_half = True if randint(0,1) == 1 else False
         # a list for number of red in each matrix in this pair
         pair_nred = []
         # fill the matrix pair number in the prefix shell
         file_prefix = file_prefix_shell.format(pairindex + 1)
-        print('completed file prefix: ', file_prefix)
-        # draw 2 matrices
+        # print('completed file prefix: ', file_prefix)
+
+        # draw 2 x (half matrix, complete matrix) in the current pair
         for i in range(2):
             # this is a dictionary for this particular drawing
-            nred = draw(canvas_dim = canvas_dim, matrix_dim= matrix_dim, p = p, save_path= save_path, file_name_shell= (file_prefix + file_name_shell), top_half= top_half)
-            nred["pair number"] = pairindex + 1
-            pair_nred.append(nred)
+            mat_dict = draw(canvas_dim = canvas_dim, matrix_dim= matrix_dim, p = p, save_path= save_path, file_name_shell= (file_prefix + file_name_shell), top_half= top_half)
+            mat_dict["pair number"] = pairindex + 1
+            mat_dict["matrix number"] = pairindex * 2 + i + 1
+            pair_nred.append(mat_dict)
+            # testing code
+            print("current matrix details: ", mat_dict)
+            print("current pair details: ", pair_nred)
         # check if the two matrices have the same number of red
         while pair_nred[1]["total red"] == pair_nred[0]["total red"]:
             same_instance += 1
             pair_nred[1] = draw(canvas_dim = canvas_dim, matrix_dim= matrix_dim, p = p, save_path= save_path, file_name_shell= (file_prefix + file_name_shell), top_half=top_half)
-        nred_overall.append(pair_nred)
+            pair_nred[1]["pair number"] = pairindex + 1
+            pair_nred[1]["matrix number"] = pairindex * 2 + i + 1
+        nred_overall.append(pair_nred[0])
+        nred_overall.append(pair_nred[1])
+
     print('This is the number of times matrix pairs had same n_red: ', same_instance)
     print('details on the matrix pairs: ', nred_overall)
+
+    # write details to csv
+    csv_name = os.path.join(save_path, "mat_details_dim_{}.csv".format(matrix_dim))
+    with open(csv_name, "w", newline="") as csv_file:
+        fieldnames = []
+        for key in nred_overall[0].keys():
+            fieldnames.append(key)
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        for dict in nred_overall:
+            writer.writerow(dict)
+
+
     return nred_overall
 
 
 
 
 # call drawing program
-# draw_n_pairs(canvas_dim= 300, matrix_dim= 10, n = 10, p = 0.5)
+draw_n_pairs(canvas_dim= 300, matrix_dim= 10, n = 10, p = 0.5)
 
-# draw_n_pairs(canvas_dim= 400, matrix_dim= 20, n = 10, p = 0.5)
+draw_n_pairs(canvas_dim= 400, matrix_dim= 20, n = 10, p = 0.5)
 
-# draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs', file_name_shell = 'dim_{}_r_{}')
-
-# draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs', file_name_shell = 'dim_{}_r_{}')
