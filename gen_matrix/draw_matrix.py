@@ -97,6 +97,7 @@ def draw(canvas_dim, matrix_dim, p, save_path, file_name_shell, top_half):
 
         # delete eps file 
         os.remove(eps_complete_name)
+        return png_complete_name
 
  
     print("turtles before border: ", screen.turtles())
@@ -135,15 +136,16 @@ def draw(canvas_dim, matrix_dim, p, save_path, file_name_shell, top_half):
         red_half = draw_dots(matrix_dim, matrix_height, space, p)
         red_total=red_half
         print("N red in top half: ", red_total)
-        save_graph()
+        # file name for half matrix
+        half_complete_name = save_graph()
 
         # finish the complete matrix
         draw_half = False
         pen.goto(starting_x, starting_y - space * (matrix_dim / 2)) # starting position for drawing bottom half
         red_total += draw_dots(matrix_dim, matrix_height, space, p)
         print("N red in complete matrix: ", red_total)
-
-        save_graph()
+        # file name for complete matrix 
+        whole_complete_name = save_graph()
 
     else: 
         draw_half = True
@@ -155,7 +157,7 @@ def draw(canvas_dim, matrix_dim, p, save_path, file_name_shell, top_half):
         red_total = red_half
         print("N red in bottom half: ", red_total)
 
-        save_graph()
+        half_complete_name = save_graph()
 
         # finish the complete matrix
         draw_half = False   
@@ -163,10 +165,10 @@ def draw(canvas_dim, matrix_dim, p, save_path, file_name_shell, top_half):
         red_total += draw_dots(matrix_dim, matrix_height, space, p)
         print("N red in complete matrix: ", red_total)
 
-        save_graph()
+        whole_complete_name = save_graph()
    
     
-    detail_dict = {"half_position": "top" if draw_top == True else "bottom", "half red": red_half, "total red": red_total}
+    detail_dict = {"half_position": "top" if draw_top == True else "bottom", "half red": red_half, "total red": red_total, "half_complete_name": half_complete_name, "whole_complete_name": whole_complete_name}
     # for testing purposes
     print(detail_dict)
     print("turtles after drawing: ", screen.turtles())
@@ -195,7 +197,7 @@ def draw(canvas_dim, matrix_dim, p, save_path, file_name_shell, top_half):
 # a function to draw n pairs of matrices
 def draw_n_pairs(canvas_dim, matrix_dim, n, p):
     dir = '/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs'
-    file_prefix_shell = 'pair_{}_'
+    file_prefix_shell = 'pair_{}_mat_{}_'
     file_name_shell = 'dim_{}_r_{}'
     # create a folder for graphs and handle already exist error
     folder = 'dim_{}_pairs_{}'.format(matrix_dim, n)
@@ -221,15 +223,17 @@ def draw_n_pairs(canvas_dim, matrix_dim, n, p):
     # draw matrix pairs
     for pairindex in range(n):
         # coin flip for top or bottom half for current pair
-        top_half = True if randint(0,1) == 1 else False
+        top_half = True if randint(1, 100) <= 50 else False
         # a list for number of red in each matrix in this pair
         pair_nred = []
-        # fill the matrix pair number in the prefix shell
-        file_prefix = file_prefix_shell.format(pairindex + 1)
-        # print('completed file prefix: ', file_prefix)
+
 
         # draw 2 x (half matrix, complete matrix) in the current pair
         for i in range(2):
+            # fill the matrix pair number and matrix number in the prefix shell
+            file_prefix = file_prefix_shell.format(pairindex + 1, i+1)
+            # print('completed file prefix: ', file_prefix)
+
             # this is a dictionary for this particular drawing
             mat_dict = draw(canvas_dim = canvas_dim, matrix_dim= matrix_dim, p = p, save_path= save_path, file_name_shell= (file_prefix + file_name_shell), top_half= top_half)
             mat_dict["pair number"] = pairindex + 1
@@ -241,6 +245,9 @@ def draw_n_pairs(canvas_dim, matrix_dim, n, p):
         # check if the two matrices have the same number of red
         while pair_nred[1]["total red"] == pair_nred[0]["total red"]:
             same_instance += 1
+            # delete the previous half and whole matrices
+            os.remove(pair_nred[1]["half_complete_name"])
+            os.remove(pair_nred[1]["whole_complete_name"])
             pair_nred[1] = draw(canvas_dim = canvas_dim, matrix_dim= matrix_dim, p = p, save_path= save_path, file_name_shell= (file_prefix + file_name_shell), top_half=top_half)
             pair_nred[1]["pair number"] = pairindex + 1
             pair_nred[1]["matrix number"] = pairindex * 2 + i + 1
@@ -251,7 +258,7 @@ def draw_n_pairs(canvas_dim, matrix_dim, n, p):
     print('details on the matrix pairs: ', nred_overall)
 
     # write details to csv
-    csv_name = os.path.join(save_path, "mat_details_dim_{}.csv".format(matrix_dim))
+    csv_name = os.path.join(save_path, f"mat_details_dim_{matrix_dim}_pairs_{n}.csv")
     with open(csv_name, "w", newline="") as csv_file:
         fieldnames = []
         for key in nred_overall[0].keys():
@@ -272,3 +279,5 @@ draw_n_pairs(canvas_dim= 300, matrix_dim= 10, n = 10, p = 0.5)
 
 draw_n_pairs(canvas_dim= 400, matrix_dim= 20, n = 10, p = 0.5)
 
+# testing a large number of matrices to see distribution
+# draw_n_pairs(canvas_dim= 400, matrix_dim= 20, n = 100, p = 0.5)
