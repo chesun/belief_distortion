@@ -211,7 +211,7 @@ def main():
         )    
     
     html_data = HTML_Strings(
-        url_dir= "http://christinasun.net/asset_hosting_service/matrix_graphs",
+        url_dir= "http://christinasun.net/asset_hosting_service/matrix_graphs/discrete_normal",
         img_size= 300
     )
 
