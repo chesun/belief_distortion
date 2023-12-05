@@ -150,8 +150,9 @@ class DotMatrix:
 
 
 
-# mat = DotMatrix(n_red=45)
-# top = mat.draw_half(True)
+mat = DotMatrix(n_red=45)
+top = mat.draw_half(True)
+mat.clear()
 # mat.save(folder_name="", filename="test1")
 # bot = mat.draw_half(half_pos="top")
 # mat.save(folder_name="test", filename="test2")
