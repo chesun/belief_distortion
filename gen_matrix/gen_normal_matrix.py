@@ -108,7 +108,7 @@ def draw(sample, mat_dim, folder_name, folder_path, url_dir, img_size):
         mat_counter = 0
 
         # update pair half position
-        pair_dict[f"mat_{mat_counter}_half"] = top_str
+        pair_dict[f"mat_half"] = top_str
         
         for n_red_total in pair:
             mat_counter += 1
@@ -151,6 +151,7 @@ def draw(sample, mat_dim, folder_name, folder_path, url_dir, img_size):
             # update details
             pair_dict[f"mat_{mat_counter}_red_total"] = n_red_total
             pair_dict[f"mat_{mat_counter}_tag_complete"] = complete_tag
+            pair_dict["treatment"] = "baseline"
 
         # update overall details 
         list_of_pair_dicts.append(pair_dict)
@@ -165,6 +166,32 @@ def export_details_to_csv(folder_path, folder_name, matrix_data):
 
     df = pd.DataFrame.from_records(matrix_data)
     df.to_csv(path)
+
+# create control task dictionaries by switching matrix order
+def export_control_treat_data(treat_dicts, folder_path, folder_name):
+    control_dicts = []
+    for treat_dict in treat_dicts:
+        control_dict = {}
+        control_dict["treatment"] = "control"
+        control_dict["pair_number"] = treat_dict["pair_number"]
+        # switch matrix left and right position in control 
+        control_dict["mat_half"] = treat_dict["mat_half"]
+        control_dict["mat_1_red_half"] = treat_dict["mat_2_red_half"]
+        control_dict["mat_1_tag_half"] = treat_dict["mat_2_tag_half"]
+        control_dict["mat_1_red_total"] = treat_dict["mat_2_red_total"]
+        control_dict["mat_1_tag_complete"] = treat_dict["mat_2_tag_complete"]
+
+        control_dict["mat_2_red_half"] = treat_dict["mat_1_red_half"]
+        control_dict["mat_2_tag_half"] = treat_dict["mat_1_tag_half"]
+        control_dict["mat_2_red_total"] = treat_dict["mat_1_red_total"]
+        control_dict["mat_2_tag_complete"] = treat_dict["mat_1_tag_complete"]
+
+        control_dicts.append(control_dict)
+    
+    # combine two lists
+    overall_dicts = treat_dicts + control_dicts
+    path = os.path.join(folder_path, folder_name, "control_treat_loop_fields.csv")
+    pd.DataFrame.from_records(overall_dicts).to_csv(path)
 
 
 
@@ -231,6 +258,13 @@ def main():
         folder_path= paths.folder_path,
         folder_name= paths.folder_name,
         matrix_data= matrix_details
+    )
+
+    # export overall treatment and control details to csv
+    export_control_treat_data(
+        treat_dicts= matrix_details, 
+        folder_path= paths.folder_path, 
+        folder_name= paths.folder_name
     )
 
 
