@@ -1,6 +1,7 @@
 from statistics import NormalDist
 import pandas as pd
 import matplotlib.pyplot as plt 
+import numpy as np
 
 # normal distribution with mean 50 and sd 10
 class DiscreteNormal:
@@ -49,7 +50,7 @@ class DiscreteNormal:
                 cdf_x += self.pdf[x]
                 break
         return cdf_x
-    def histogram(self, population=1000, extra = 25):
+    def histogram(self, population=1000, extra = 20, show=True):
         # returns a histogram plotted by matplotlib
         if type(population) is not int:
             raise ValueError
@@ -57,19 +58,23 @@ class DiscreteNormal:
         pdf_df = pd.DataFrame.from_dict(self.pdf, orient="index", columns=["p"]) # keys (support) are rows
         # add extra values at either end of the support
         start_df = pd.DataFrame.from_dict({x:0 for x in range(0, extra)}, orient="index", columns=["p"])
-        print(start_df)
+        # print(start_df)
         end_df = pd.DataFrame.from_dict({x:0 for x in range(self.upper_limit + 1, self.upper_limit + extra + 1)}, 
                                         orient="index", columns=["p"])
-        print(end_df)
+        # print(end_df)
         # multiply the probabilities by 1000 to get frequency histogram from a population of 1000
         pdf_df["p"] = pdf_df["p"].apply(lambda x: x*population)
         df = pd.concat([start_df, pdf_df, end_df])
-        print(df)
+        # print(df)
         fig, axs = plt.subplots(1, 1, figsize =(5, 5))
         axs.bar(x=df.index.tolist(), height = df["p"])
-        plt.show()
-        return df
-         
+        if show is True:
+            plt.show()
+        return fig
+    
+    def sample(self, n_rows = 20, n_cols = 2):
+        return np.random.choice(list(self.pdf.keys()), p = list(self.pdf.values()), size = (n_rows, n_cols))
+
 
 
 
