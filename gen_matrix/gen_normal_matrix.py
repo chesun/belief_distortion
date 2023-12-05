@@ -16,6 +16,7 @@ import csv
 class Constants:
     """ Data class to store constants"""
     n_pairs: int
+    n_sets: int
     mat_dim: int
 
 @dataclass
@@ -42,14 +43,13 @@ def save_dist_graph(distribution):
 
 
 # draw random sample
-def draw_sample(n_pairs, dist):
+def draw_sample(n_pairs, dist, folder_path, folder_name):
     sample = dist.sample(n_rows=n_pairs)
     for row in range(n_pairs):
         while sample[row, 0] == sample[row, 1]:
             sample[row] = dist.sample(1, 2)
     # save array to csv
-    pd.DataFrame(sample).to_csv("./gen_matrix/graphs/discrete_normal/sample.csv")
-    print(sample)
+    pd.DataFrame(sample).to_csv(os.path.join(folder_path, folder_name, "sample.csv"))
     return sample # this is a numpy array
 
 # create folder
@@ -193,20 +193,12 @@ def export_control_treat_data(treat_dicts, folder_path, folder_name):
     path = os.path.join(folder_path, folder_name, "control_treat_loop_fields.csv")
     pd.DataFrame.from_records(overall_dicts).to_csv(path)
 
-
-
-
-#*****************************************************************************
-# main functionality
-def main():
-    constants = Constants(
-        n_pairs = 20, 
-        mat_dim= 10
-        )
+# create matrix pairs 
+def gen_matrix_pairs(mat_dim, n_pairs, set_num):
 
     paths = Paths(
         folder_path="./gen_matrix/graphs/discrete_normal",
-        folder_name = f"dim_{constants.mat_dim}_pairs_{constants.n_pairs}",
+        folder_name = f"set_{set_num}_dim_{mat_dim}_pairs_{n_pairs}",
         hosting_path= "/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/asset_hosting_service/matrix_graphs/discrete_normal"
         )    
     
@@ -224,7 +216,7 @@ def main():
     save_dist_graph(dist)
 
     # draw random sample
-    sample_array = draw_sample(n_pairs=constants.n_pairs, dist=dist)
+    sample_array = draw_sample(n_pairs=n_pairs, dist=dist, folder_name= paths.folder_name, folder_path= paths.folder_path)
 
     # create folder and clear contents
     make_folder(folder_name=paths.folder_name, folder_path=paths.folder_path)
@@ -236,7 +228,7 @@ def main():
     # draw matrices and return matrix details
     matrix_details = draw(
         sample= sample_array, 
-        mat_dim= constants.mat_dim, 
+        mat_dim= mat_dim, 
         folder_name= paths.folder_name,
         folder_path= paths.folder_path,
         url_dir= html_data.url_dir,
@@ -267,6 +259,18 @@ def main():
         folder_name= paths.folder_name
     )
 
+
+#*****************************************************************************
+# main functionality
+def main():
+    constants = Constants(
+        n_pairs = 10, 
+        n_sets = 20,
+        mat_dim = 10
+        )
+    
+    for i in range(constants.n_sets):
+        gen_matrix_pairs(mat_dim= constants.mat_dim, n_pairs= constants.n_pairs, set_num = i+1)
 
 
 

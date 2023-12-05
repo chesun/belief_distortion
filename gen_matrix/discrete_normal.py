@@ -66,7 +66,7 @@ class DiscreteNormal:
         pdf_df["p"] = pdf_df["p"].apply(lambda x: x*population)
         df = pd.concat([start_df, pdf_df, end_df])
         # print(df)
-        fig, axs = plt.subplots(1, 1, figsize =(5, 5))
+        fig, axs = plt.subplots(1, 1, figsize =(10, 10))
         axs.bar(x=df.index.tolist(), height = df["p"])
         if show is True:
             plt.show()
