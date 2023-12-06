@@ -84,7 +84,7 @@ def copy_folder(src_path: str, src_folder: str, dst_path: str, dst_folder: str):
 # create html img tag
 def gen_img_tag(url_dir, folder_name, filename, img_size):
 
-    full_url = os.path.join(url_dir, folder_name, filename)
+    full_url = os.path.join(url_dir, folder_name, filename + ".png")
     tag = f"<img src= \"{full_url}\" width = \"{img_size}\" height = \"{img_size}\" >"
     return tag 
 
@@ -190,7 +190,10 @@ def export_control_treat_data(treat_dicts, folder_path, folder_name):
     
     # combine two lists
     overall_dicts = treat_dicts + control_dicts
-    path = os.path.join(folder_path, folder_name, "control_treat_loop_fields.csv")
+    # assign task ID
+    for index in range(len(overall_dicts)):
+        overall_dicts[index]["task_id"] = index + 1
+    path = os.path.join(folder_path, folder_name, f"{folder_name}"+"control_treat_loop_fields.csv")
     pd.DataFrame.from_records(overall_dicts).to_csv(path)
 
 # create matrix pairs 
