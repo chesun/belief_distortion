@@ -39,7 +39,7 @@ class HTML_Strings:
 # save the distribution histogram
 def save_dist_graph(distribution):
     fig = distribution.histogram(show=False)
-    fig.savefig("./gen_matrix/graphs/dist_histogram.png")
+    fig.savefig("./gen_matrix/graphs/dist_histogram.png", bbox_inches='tight')
 
 
 # draw random sample
@@ -278,7 +278,13 @@ def main():
 
 
 
+def histogram_only():
+    # initialize distribution 
+    dist = DN(mean=50, sd=10, cutoff_distance=30)
+    print(dist.complete_pdf())
 
+    # save distribution graph
+    save_dist_graph(dist)
 
 
 
@@ -290,7 +296,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    histogram_only()
 
 
 

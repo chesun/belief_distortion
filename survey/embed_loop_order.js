@@ -1,4 +1,4 @@
-// set embedded data for the viewing order in loop and merge
+// set embedded data for the viewing order in loop and merge for the actual rounds
 
 // var currentHalfPos = "${lm://Field/2}";
 // var currentMatAHalfRed = parseInt("${lm://Field/5}");
@@ -10,11 +10,17 @@
 
 var currentTreat = "${lm://Field/7}";
 var currentLoopNum = parseInt("${lm://CurrentLoopNumber}");
-var currentTaskID = parseInt("${lm://Field/12}")
+var currentTaskID = parseInt("${lm://Field/12}");
 
 Qualtrics.SurveyEngine.setEmbeddedData('task_id_loop' + currentLoopNum, currentTaskID);
 Qualtrics.SurveyEngine.setEmbeddedData('treat_loop' + currentLoopNum, currentTreat);
 Qualtrics.SurveyEngine.setEmbeddedData('current_loop_treat', currentTreat);
 
+// for the practice rounds
+
+var currentPracticeLoopNum = parseInt("${lm://CurrentLoopNumber}");
+var currentPracticeTaskID = parseInt("${lm://Field/12}");
+
+Qualtrics.SurveyEngine.setEmbeddedData('practice_task_id_loop' + currentPracticeLoopNum, currentPracticeTaskID);
 
 

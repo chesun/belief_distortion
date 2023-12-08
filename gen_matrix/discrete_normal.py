@@ -66,8 +66,12 @@ class DiscreteNormal:
         pdf_df["p"] = pdf_df["p"].apply(lambda x: x*population)
         df = pd.concat([start_df, pdf_df, end_df])
         # print(df)
-        fig, axs = plt.subplots(1, 1, figsize =(10, 10))
-        axs.bar(x=df.index.tolist(), height = df["p"])
+        fig, axs = plt.subplots(1, 1, figsize =(8, 8))
+        axs.bar(x=df.index.tolist(), height = df["p"], width = 0.45)
+        # change tick label size
+        axs.tick_params(axis='both', which='major', labelsize=22)
+        axs.tick_params(axis='both', which='minor', labelsize=22)
+
         if show is True:
             plt.show()
         return fig
