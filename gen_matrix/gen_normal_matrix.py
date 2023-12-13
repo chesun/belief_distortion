@@ -9,6 +9,7 @@ import os
 import shutil
 import pdb
 import csv
+from matplotlib import pyplot as plt
 
 # Constants
 
@@ -41,9 +42,11 @@ class HTML_Strings:
 def save_dist_graph(distribution):
     fig = distribution.histogram(show=False)
     fig.savefig("./gen_matrix/graphs/dist_histogram.png", bbox_inches='tight')
-
+    # plt.close("all")
 
 # draw random sample
+
+
 def draw_sample(n_pairs, dist, folder_path, folder_name):
     sample = dist.sample(n_rows=n_pairs)
     for row in range(n_pairs):
@@ -53,8 +56,6 @@ def draw_sample(n_pairs, dist, folder_path, folder_name):
     pd.DataFrame(sample).to_csv(os.path.join(
         folder_path, folder_name, "sample.csv"))
     return sample  # this is a numpy array
-
-
 
 
 def make_folder(folder_path, folder_name):
@@ -225,7 +226,7 @@ def gen_matrix_pairs(mat_dim, n_pairs, set_num):
     )
 
     html_data = HTML_Strings(
-        url_dir="http://christinasun.net/asset_hosting_service/matrix_graphs/discrete_normal",
+        url_dir="https://christinasun.net/asset_hosting_service/matrix_graphs/discrete_normal",
         img_size=300
     )
 
@@ -305,4 +306,5 @@ def histogram_only():
 
 
 if __name__ == "__main__":
+    main()
     histogram_only()

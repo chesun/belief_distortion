@@ -1,0 +1,158 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    .collapsible {
+        background-color: #c7c7c7;
+        color: #000;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    .active, .collapsible:hover {
+        background-color: #FFBF00;
+    }
+    
+    .content {
+      padding: 0 18px;
+      display: none;
+      overflow: hidden;
+      background-color: #f1f1f1;
+    }
+    </style>
+    </head>
+    <body>
+    
+    
+    <p>Please click the buttons below if you would like to review instructions:</p>
+    <button type="button" class="collapsible">Show/Hide Instructions on the Portfolio Collection</button>
+    <div class="content">
+
+        <div>&nbsp;</div>
+        There is a collection of <strong>1000 investment portfolios</strong>. Each investment portfolio contains <strong>100 companies</strong>, and each company is either good (profitable) or bad (unprofitable). Each&nbsp;portfolio contains good companies and bad companies.<br>
+        <br>
+        A portfolio is <strong>better</strong> than another one if it has <strong>more good companies</strong>.&nbsp;The following figure, which is called a histogram, depicts the distribution of the <strong>number of good companies in a portfolio</strong> for this collection of 1000 investment portfolios.&nbsp;<br>
+        <br>
+        <img width="400" src="http://christinasun.net/asset_hosting_service/matrix_graphs/dist_histogram.png" height="400"><br>
+        This figure can be read as follows. The<strong> horizontal axis</strong> shows each possible <strong>number of good companies</strong>, from 0 to 100. For each possible number, the height of the corresponding bar depicts the <strong>number of portfolios</strong> that have that number of good companies (as shown on the <strong>vertical axis</strong>).<br>
+        <br>
+        For example, there are 13 portfolios with 45 good companies &nbsp;in this collection, and 40 portfolios with 50 good companies.  <br> The portfolios you see in this experiment come from this collection.  </div>
+    
+    <button type="button" class="collapsible">Show/Hide Instructions on Your Task</button>
+    <div class="content">
+    
+    <p>This experiment consists of $${e://Field/num_rounds} rounds. Your tasks in each round consists of 4 stages.</p>
+
+        <br>
+        <p><em>Stage 1: Preparation Stage</em></p>
+        <br />
+        When a round begins, the interface will select <strong>2 portfolios</strong>&nbsp;that are&nbsp;<b>RANDOMLY DRAWN</b>&nbsp;from the collection of 1000 portfolios.&nbsp;</h4>
+        
+        <ul>
+         <li>If a pair of portfolios have the same ratings, it is discarded and 2 new portfolios are randomly drawn from the collection to make a new pair.</li>
+         <li>This process guarantees that the <strong>2 portfolios in a given round will always have different numbers of good companies</strong>.</li>
+        </ul>
+        Your job in a round is to <b>JUDGE</b>&nbsp;the number of good companies for <strong>BOTH</strong> of the portfolios, and choose one portfolio to&nbsp;<strong>INVEST</strong>&nbsp;in&nbsp;based on your judgment.&nbsp;<br />
+        <br />
+        The interface will represent each portfolio as a <strong>square grid of 100 dots</strong>, where each dot&nbsp;is either <strong>black or red</strong>.
+        
+        <ul>
+         <li>The <b>number of good companies</b>&nbsp;of a portfolio is equal to the&nbsp;<strong>number of red dots&nbsp;</strong>in the square grid.</li>
+         <li>The location of the red and black dots are&nbsp;<strong>RANDOMLY DETERMINED.</strong></li>
+         <li>The following is an example of a portfolio:</li>
+        </ul>
+        <img height="300" src="http://christinasun.net/asset_hosting_service/matrix_graphs/discrete_normal/set_20_dim_10_pairs_10/pair_4_mat_2_r_66_full.png" width="300" />   
+        
+        <br>
+        <p><em>Stage 2</em></p> 
+&nbsp;
+
+        <ol>
+        <li>In the second stage, you will be shown&nbsp;<strong>HALF </strong>of the&nbsp;portfolios (whether the top or bottom halves are shown is random). The following is an example.
+
+        <ul>
+        <li>They will be shown for&nbsp;${e://Field/seconds_shown} seconds.</li>
+        <li>You will&nbsp;<strong>report</strong>&nbsp;how many good companies&nbsp;<strong>you think</strong>&nbsp;are in each of the two<strong>&nbsp;half portfolios</strong>.</li>
+        <li>
+        <table align="center" border="1" style="width:500px;">
+        <caption>
+        <div style="text-align: center;">Example of Half Portfolios</div>
+        </caption>
+        <tbody>
+            <tr>
+            <td style="text-align: center;">Half of Portfolio A</td>
+            <td style="text-align: center;">Half of Portfolio B</td>
+            </tr>
+            <tr>
+            <td><img height="300" src="http://christinasun.net/asset_hosting_service/matrix_graphs/discrete_normal/set_20_dim_10_pairs_10/pair_4_mat_1_r_21_bottom.png" width="300" /></td>
+            <td><img height="300" src="http://christinasun.net/asset_hosting_service/matrix_graphs/discrete_normal/set_20_dim_10_pairs_10/pair_4_mat_2_r_38_bottom.png" width="300" /></td>
+            </tr>
+        </tbody>
+        </table>
+        </li>
+        <li>Notice that you can make some judgments on which portfolio is better from the half portfolios. For example, since half of Portfolio A has 21 good companies, a reasonable guess is that the complete Portfolio A would have 21 x 2 = 42 good companies.</li>
+        <li>However, you will not be able to know precisely the number of good companies in the complete portfolios.</li>
+        <li>The interface will automatically calculate the <strong>predicted number</strong> of good companies by <strong>multiplying your guess</strong> for the half portfolios <strong>by 2</strong>.</li>
+        </ul>
+        </li>
+        </ol>
+        
+        <p><em>Stage 3 and Stage 4</em></p>
+        <br>
+        <ol>
+        <li>In some rounds, you will make your <strong>investment</strong> decision in <strong>stage 3,</strong>&nbsp;after seeing the half portfolios. In<strong> other rounds</strong>, you will make your investment decision in<strong> stage 4,&nbsp;</strong>after you see both the half portfolios and the complete portfolios<strong>.&nbsp;</strong>You <strong>won&#39;t know</strong> when you will make the investment decision until <b>after stage 2</b>.</li>
+        <li>Below are examples of&nbsp;<strong>COMPLETE&nbsp;</strong>portfolios.&nbsp;
+        <ul>
+        <li>Portfolio A and B are the&nbsp;same portfolios as above.</li>
+        <li>They will be shown for&nbsp;${e://Field/seconds_shown} seconds.</li>
+        <table align="center" border="1" style="width:500px;">
+        <caption>
+        <div style="text-align: center;">Example of Complete Portfolios</div>
+        </caption>
+        <tbody>
+            <tr>
+            <td style="text-align: center;">Complete Portfolio A</td>
+            <td style="text-align: center;">Complete Portfolio B</td>
+            </tr>
+            <tr>
+            <td><img height="300" src="http://christinasun.net/asset_hosting_service/matrix_graphs/discrete_normal/set_20_dim_10_pairs_10/pair_4_mat_1_r_43_full.png" width="300" /></td>
+            <td><img height="300" src="http://christinasun.net/asset_hosting_service/matrix_graphs/discrete_normal/set_20_dim_10_pairs_10/pair_4_mat_2_r_66_full.png" width="300" /></td>
+            </tr>
+        </tbody>
+        </table>
+        </li>
+        <li>You will then&nbsp;<strong>report</strong>&nbsp;how many good companies <strong>you think</strong> are in each of the two <strong>complete portfolios.</strong></li>
+        </ul>
+        </li>
+        <li>How to make your investment decision:
+        <ul>
+        <li>You will be able to invest in&nbsp;<strong>one</strong>&nbsp;portfolio each round.</li>
+        <li>Investing in the portfolio with&nbsp;<strong>more good companies</strong>&nbsp;will give you a higher payoff. This is explained in detail next.</li>
+        </ul>
+        </li>
+        </ol>
+    </div>
+    
+        <button type="button" class="collapsible">Show/Hide Instructions on Your Payoff</button>
+    <div class="content">
+        <ul>
+            <li>At the end of the experiment, <strong>one round</strong> will be <strong>randomly selected </strong>to calculate your bonus payment.</li>
+            <li>In this selected round, if you&nbsp;successfully <strong>chose to invest </strong>in the<strong> better portfolio</strong> (i.e., the portfolio with more good companies), you will earn a bonus of <strong>$${e://Field/choice_bonus}.</strong></li>
+            <li>One of the two portfolios in that round is randomly selected, and one of your guesses&nbsp;on the number of good companies in that portfolio&nbsp;will be randomly chosen. If your guess&nbsp;is <strong>no further than 5</strong> from the<strong> true number,</strong> you will receive a bonus of <strong>$${e://Field/belief_bonus}.</strong>
+            <ul>
+                <li>For example, if the true number of good companies in the portfolio is 63, then you will receive&nbsp;$${e://Field/belief_bonus} if you report any number between (and including) 58 and 68.&nbsp;</li>
+                <li>However, if your guess is any other number, you will receive $0.&nbsp;</li>
+            </ul>
+            </li>
+            <li>This payment scheme means that you should <strong>treat each round as if it would be used for payment</strong>, and try your best to <strong>make your best judgments and best guesses</strong>.</li>
+            <li>You will <strong>not receive feedback</strong> between rounds, and will learn your bonus details at the <strong>end of the experiment</strong>.</li>
+        </ul>
+            </div>
+
+    
+    </body>
