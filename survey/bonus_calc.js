@@ -5,9 +5,11 @@ function getRandomIntInclusive(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
   }
 
+// get the number of rounds
+var num_rounds = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('num_rounds'));
 
 // randomly select the round and questions for payment
-var round_drawn = getRandomIntInclusive(1, 10);
+var round_drawn = getRandomIntInclusive(1, num_rounds);
 var portfolio_number_drawm = getRandomIntInclusive(1,2);
 if (portfolio_number_drawm == 1) {
     var portfolio_letter_drawn = "A";
@@ -20,6 +22,8 @@ var first_or_second_belief = getRandomIntInclusive(1,2);
 // get the actual red in the selected round
 var actual_red_A = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('actual_red_A_round' + round_drawn));
 var actual_red_B = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('actual_red_B_round' + round_drawn));
+console.log("actual A is " + actual_red_A);
+console.log("actual B is " + actual_red_B);
 // whether A or B has more red dots
 var higherA = actual_red_A > actual_red_B;
 console.log("higherA is " + higherA);
@@ -29,7 +33,9 @@ console.log("higherB is " + higherB);
 
 // get the relevant guess
 var belief = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('guess_' + first_or_second_belief + '_' + portfolio_letter_drawn + '_round' + round_drawn));
-console.log("reported belief is " + belief)
+console.log("which belief is drawn: " + first_or_second_belief);
+console.log("which portfolio for belief is drawn: " + portfolio_letter_drawn)
+console.log("reported belief is " + belief);
 
 // var guess_A = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('guess_' + first_or_second_belief + "_A_round" + round_drawn));
 // var guess_B = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('guess_' + first_or_second_belief + "_B_round" + round_drawn));
