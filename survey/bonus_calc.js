@@ -18,8 +18,8 @@ var belief_error_bound = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('belief
 
 // randomly select the round and questions for payment
 var round_drawn = getRandomIntInclusive(1, num_rounds);
-var portfolio_number_drawm = getRandomIntInclusive(1,2);
-if (portfolio_number_drawm == 1) {
+var portfolio_number_drawn = getRandomIntInclusive(1,2);
+if (portfolio_number_drawn == 1) {
     var portfolio_letter_drawn = "A";
 } else {
     var portfolio_letter_drawn = "B";
@@ -48,8 +48,8 @@ var belief = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('guess_' + first_or
 // var guess_A = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('guess_' + first_or_second_belief + "_A_round" + round_drawn));
 // var guess_B = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('guess_' + first_or_second_belief + "_B_round" + round_drawn));
 
-// get the investment (1 is A, 2 is B)
-var investment = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('invest_round' + round_drawn));
+// get the investment (A or B)
+var investment = Qualtrics.SurveyEngine.getEmbeddedData('invest_round' + round_drawn);
 
 
 
@@ -57,13 +57,13 @@ var investment = parseInt(Qualtrics.SurveyEngine.getEmbeddedData('invest_round' 
 // if A has more red dots
 if (higherA) { 
     // check if invested in A
-    if (investment == 1) {
+    if (investment == "A") {
         var earned_choice_bonus = choice_bonus;
     } else {
         var earned_choice_bonus = 0;
     }
 } else { // if B has more red dots
-    if (investment == 2) {
+    if (investment == "B") {
         var earned_choice_bonus = choice_bonus;
     } else {
         var earned_choice_bonus = 0;
@@ -91,14 +91,9 @@ Qualtrics.SurveyEngine.setEmbeddedData('round_drawn', round_drawn);
 Qualtrics.SurveyEngine.setEmbeddedData('portfolio_for_belief', portfolio_letter_drawn);
 Qualtrics.SurveyEngine.setEmbeddedData('belief_first_or_second', first_or_second_belief);
 
-// investment choice and belief report
-if (investment == 1) {
-    var investment_letter = "A";
-} else {
-    var investment_letter = "B";
-}
+
  
-Qualtrics.SurveyEngine.setEmbeddedData('chosen_round_invest', investment_letter);
+Qualtrics.SurveyEngine.setEmbeddedData('chosen_round_invest', investment);
 Qualtrics.SurveyEngine.setEmbeddedData('chosen_belief', belief);
 
 // portfolio details
