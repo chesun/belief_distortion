@@ -8,8 +8,8 @@ Qualtrics.SurveyEngine.addOnPageSubmit(function()
 
     var currentLoop = "${lm://CurrentLoopNumber}"
 
-    Qualtrics.SurveyEngine.addEmbeddedData("guess_2_A_round" + currentLoop, guess_A);
-    Qualtrics.SurveyEngine.addEmbeddedData("guess_2_B_round" + currentLoop, guess_B);
+    Qualtrics.SurveyEngine.setEmbeddedData("guess_2_A_round" + currentLoop, guess_A);
+    Qualtrics.SurveyEngine.setEmbeddedData("guess_2_B_round" + currentLoop, guess_B);
 
    
 });

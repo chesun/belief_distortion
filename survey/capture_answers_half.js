@@ -11,12 +11,12 @@ Qualtrics.SurveyEngine.addOnPageSubmit(function()
     // set embedded variable for bonus calculation
     // guesses after seeing half portfolios
     var currentLoop = "${lm://CurrentLoopNumber}"
-    Qualtrics.SurveyEngine.addEmbeddedData("guess_1_A_round" + currentLoop, guess_A_half * 2);
-    Qualtrics.SurveyEngine.addEmbeddedData("guess_1_B_round" + currentLoop, guess_B_half * 2);
+    Qualtrics.SurveyEngine.setEmbeddedData("guess_1_A_round" + currentLoop, guess_A_half * 2);
+    Qualtrics.SurveyEngine.setEmbeddedData("guess_1_B_round" + currentLoop, guess_B_half * 2);
 
     // actual number of red in complete portfolios
-    Qualtrics.SurveyEngine.addEmbeddedData("actual_red_A_round" + currentLoop, "${lm://Field/5}");
-    Qualtrics.SurveyEngine.addEmbeddedData("actual_red_B_round" + currentLoop, "${lm://Field/10}");
+    Qualtrics.SurveyEngine.setEmbeddedData("actual_red_A_round" + currentLoop, "${lm://Field/5}");
+    Qualtrics.SurveyEngine.setEmbeddedData("actual_red_B_round" + currentLoop, "${lm://Field/10}");
 
 
     // update autofill display

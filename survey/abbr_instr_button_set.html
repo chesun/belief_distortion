@@ -63,16 +63,21 @@
         <h3>Experiment Overview</h3>
 
         <p>
-            This experiment consists of ${e://Field/num_rounds} rounds.<br>
-            <br>
-            When a round begins, the interface will select <strong>2 portfolios</strong>&nbsp;that are&nbsp;<b>RANDOMLY DRAWN</b>&nbsp;from the collection of 1000 portfolios.&nbsp;
+            In the survey, you will be completing ${e://Field/num_rounds} rounds of investment tasks. In each round, you will have limited time to look at 2 investment portfolios.<br>
         </p>
+            
         <p>
-            The pair of portfolios are re-selected every round. Your job in a round is to <b>JUDGE</b>&nbsp;the number of good companies for <strong>BOTH</strong> of the portfolios, and choose one portfolio to&nbsp;<strong>INVEST</strong>&nbsp;in&nbsp;based on your judgment.&nbsp;To maximize your earning you should choose the one that you <strong>JUDGE</strong> to have a higher number of good companies.<br>
+            Each portfolio includes <b>100 companies</b>, represented by a grid of <b>100 dots</b>. <b>Red</b> dots represent <b>good</b> companies, and <b>black</b> dots represent <b>bad</b> companies. <br>
         </p>
+
         <p>
-            The interface will represent each portfolio as a <strong>square grid of 100 dots</strong>, where each dot&nbsp;is either <strong>black or red</strong>.
+            When a round begins, the interface will select <strong>2 portfolios</strong>&nbsp;that are&nbsp;<b>RANDOMLY DRAWN</b>&nbsp;from the collection of 1000 portfolios. <br>
         </p>
+
+        <p>
+            The pair of portfolios are re-selected every round. Your job in a round is to <b>JUDGE</b>&nbsp;the number of good companies for <strong>EACH</strong> of the portfolios, and choose one portfolio to&nbsp;<strong>INVEST</strong>&nbsp;in&nbsp;based on your judgment.&nbsp;To maximize your earning you should choose the one that you <strong>JUDGE</strong> to have a higher number of good companies (red dots).<br>
+        </p>
+
         
         <p>
             <ul>
@@ -143,14 +148,15 @@
     
     <button type="button" class="collapsible">Summary of A Round</button>
     <div class="content">
+        <p>
+            In each round, you will encounter 2 investment portfolios. Each portfolio contains 100 companies, represented by 100 dots. Good companies are red dots, and bad companies are black dots. 
+        </p>
 
         <p>
             In short, in a given round you will complete tasks in 3 stages:
 
         </p>
-       <p>
-            In short, in a given round you will complete tasks in 3 stages:
-            <p>
+
                 <ol>
                     <li>See half portfolios, and Guess the number of good companies in the incomplete half portfolios</li>
                     <li>See complete portfolios, and Guess the number of good companies in the complete portfolios</li>
