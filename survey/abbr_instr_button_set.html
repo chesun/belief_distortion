@@ -6,200 +6,135 @@
     
     
     <p>Please click the buttons below if you would like to review instructions:</p>
-    <button type="button" class="collapsible">Instructions on the Portfolio Collection</button>
+    <!-- --------------------------------------------------------------------------- -->
+
+    <button type="button" class="collapsible">Experiment Overview</button>
     <div class="content">
 
-        <h3>The Investment Portfolios</h3>
-        &nbsp;
-
-        <p>
-            An investment portfolio (or portfolio henceforth) contains stocks from&nbsp;<strong>100 companies</strong>, and each company is either good (profitable) or bad (unprofitable).&nbsp;A portfolio is <strong>better</strong> than another one if it has <strong>more good companies, </strong>and a better portfolio will earn you more money.&nbsp;<br>
-            &nbsp;
+        <p>In the survey, you will be playing ${e://Field/num_rounds} rounds of investment games.</p>
+        <br>
+        <p>In each round, you will have limited time to look at 2 investment portfolios. Each portfolio includes <b>100 companies</b>, represented by a grid of <b>100 dots</b>. <b>Red</b> dots represent <b>good</b> companies, and <b>black</b> dots represent <b>bad</b> companies. Your job as an investor is to <b>judge</b> the number of good companies in each portfolio, and <b>make investment decisions. </b>
         </p>
-        <p>
-            We have constructed a collection of <strong>1000 such portfolios</strong>. For <strong>each number of good companies (X-Axis)</strong>, the following figure (called a histogram) tells you <strong>how many of the portfolios</strong>&nbsp;<strong>(Y-Axis)</strong> have that number of good companies. The average number of good companies for portfolios in this collection is 50.<br>
-            <img width="400" src="http://christinasun.net/asset_hosting_service/matrix_graphs/dist_histogram.png" height="400"><br>
-        </p>
-        <p>
-            This figure can be read as follows. The<strong> horizontal axis</strong> shows each possible <strong>number of good companies</strong>, from 0 to 100. For each possible number, the height of the corresponding bar depicts the <strong>number of portfolios</strong> that have that number of good companies (as shown on the <strong>vertical axis</strong>).<br>
-            <br>
-            <em>The portfolios you see in this experiment will come from this collection of portfolios.</em> 
-        </p>
-
-        <p>
-            Here are some examples:
-        </p>
-        <p>
-            For example, suppose you want to know, how many portfolios out of the 1000 have 50 good companies? To know the answer, note the number 50 on the X-axis, and confirm the corresponding height at that point to be 40. This means that 40 portfolios have 50 good companies.<br>
-            <br>
-            As another example, suppose you want to know how many portfolios have 40 good companies in them. To find out, you would look for the number 40 on the X-axis, and find the corresponding height at that point to be 24. This means that that 24 portfolios have 40 good companies in them.    
-        </p>
-
-    </div>
-
-    <button type="button" class="collapsible">More Information on Investment Portfolios</button>
-
-    <div class="content">
-        <p>Here is some additional information that you can figure out if you spent some time thinking abut this graph.&nbsp;</p>
-        <img width="400" src="http://christinasun.net/asset_hosting_service/matrix_graphs/dist_histogram.png" height="400"><br>
-        <p>
-            <ul>
-                <li>The distribution is symmetric around the average. For example, the number of portfolios with fewer than 40 good companies (10 lower than average) is the same as the number of portfolios with more than 60 good companies (10 higher than average).</li>
-                <li>Here are some more details about this collection of portfolios:
-                <ul>
-                <li>42% of portfolios have between 45 and 55 good companies</li>
-                <li>71% of portfolios have between 40 and 60 good companies</li>
-                <li>88% of the people have between 35 and 65 good companies</li>
-                </ul>
-                </li>
-                <li>The average number of good companies over all 1000 portfolios is 50.&nbsp;</li>
-                </ul>
-        </p>
-    </div>
-    
-    <button type="button" class="collapsible">Instructions on Your Tasks</button>
-    <div class="content">
-    
-        <h3>Experiment Overview</h3>
-
-        <p>
-            In the survey, you will be completing ${e://Field/num_rounds} rounds of investment tasks. In each round, you will have limited time to look at 2 investment portfolios.<br>
-        </p>
-            
-        <p>
-            Each portfolio includes <b>100 companies</b>, represented by a grid of <b>100 dots</b>. <b>Red</b> dots represent <b>good</b> companies, and <b>black</b> dots represent <b>bad</b> companies. <br>
-        </p>
-
-        <p>
-            When a round begins, the interface will select <strong>2 portfolios</strong>&nbsp;that are&nbsp;<b>RANDOMLY DRAWN</b>&nbsp;from the collection of 1000 portfolios. <br>
-        </p>
-
-        <p>
-            The pair of portfolios are re-selected every round. Your job in a round is to <b>JUDGE</b>&nbsp;the number of good companies for <strong>EACH</strong> of the portfolios, and choose one portfolio to&nbsp;<strong>INVEST</strong>&nbsp;in&nbsp;based on your judgment.&nbsp;To maximize your earning you should choose the one that you <strong>JUDGE</strong> to have a higher number of good companies (red dots).<br>
-        </p>
-
+        <br>
+        <p>You have 3 opportunities to earn bonus money:</p>
         
-        <p>
-            <ul>
-                <li>The <b>number of good companies</b>&nbsp;of a portfolio is equal to the&nbsp;<strong>number of red dots&nbsp;</strong>in the square grid.</li>
-                <li>The <b>number of </b><strong>bad companies</strong> is equal to the <b>number of</b> <strong>black dots.</strong></li>
-                <li>The location of the red and black dots are&nbsp;<strong>RANDOMLY DETERMINED.</strong></li>
-               </ul>
-        </p>
-
-        <h3>
-            Your Tasks in Each Round
-        </h3>
-
-        <p>
-            Each round begins with the interface selecting 2 portfolios, as mentioned above. Your tasks in a round consists of 3 stages.
-        </p>
-        <h4>
-            Stage 1
-        </h4>
-        <p>
-            In the 1st stage you will be shown an <strong>incomplete</strong> version of the portfolios. Specifically, you will see the <strong>TOP OR BOTTOM HALF</strong> of the portfolios (weather the top or bottom halves are shown is random).
-            <ul>
-                <li>They will be shown for ${e://Field/seconds_shown} seconds.</li>
-                <li>You will&nbsp;<strong>report</strong>&nbsp;how many good companies&nbsp;<strong>you think</strong>&nbsp;are in each of the two<strong>&nbsp;half portfolios</strong>.</li>
-                <li>The interface will automatically calculate the <strong>predicted number</strong> of good companies by <strong>multiplying your guess</strong> for the half portfolios <strong>by 2</strong>.</li>
-            </ul>
-        </p>
-
-        <h4>Stage 2 and 3</h4>
-        <p>
-            In stage 2 and 3, you will be able to make your investment and see the complete portfolios. The timing of these two tasks will be different in different rounds.
-
-        </p>
-
-        <p>When you can make your investment:</p>
-        <p>
-            <ol>
-                <li>
-                    In <strong>some rounds</strong>, you will make your <strong>investment</strong> decision in stage 2<strong>,</strong>&nbsp;immediately&nbsp;<strong>after seeing the half portfolios</strong>. 
-                </li>
-                <li>
-                    In<strong> other rounds</strong>, you will make your investment decision in<strong> </strong>stage 3<strong>,&nbsp;after you see both the half portfolios and the complete portfolios.&nbsp;</strong>You <strong>won&#39;t know</strong> when you will make the investment decision until <b>after you see the half portfolios</b>.
-                </li>
-                </ol>
-        </p>
-        <p>How to make guesses about the complete portfolios:</p>
-        <p>
-            <ul>
-                <li>You will see the complete portfolios for ${e://Field/seconds_shown} seconds.</li>
-                <li>After that, you will report how many good companies you think are in each of the two complete portfolios.</li>
-            </ul> 
-         </p>
-
-        <p>How to make your investment decision</p>
-        <p>
-            <ul>
-                <li>
-                    You will be able to invest in <strong>one</strong> portfolio each round.
-                </li>
-                <li>
-                    Investing in the portfolio with <strong>more good companies</strong> will give you a higher payoff. Please see instructions on your payoff for details.
-                </li>
-            </ul>
-        </p>
-
+        <ul>
+         <li>Making good investments</li>
+         <li>Scoring in the top&nbsp;${e://Field/num_winners} in the investment games</li>
+         <li>Making accurate guesses about the number of good companies in the portfolios</li>
+        </ul>
+        <i>The better you are at investing in these portfolios, the more money you will earn.&nbsp;</i>You will learn more details later.
+        
+    
 
     </div>
-    
+<!-- --------------------------------------------------------------------------- -->
+    <button type="button" class="collapsible">Investment Portfolios</button>
+
+    <div class="content">
+        <p>
+            An investment portfolio (or portfolio henceforth) contains stocks from&nbsp;<strong>100 companies</strong>, and each company is either good (profitable) or bad (unprofitable). Portfolios with more good companies&nbsp;will earn you more money than portfolios with fewer good companies.
+        </p>
+        <br>           
+         <p>
+            For this experiment, we have constructed a collection of <strong>1000 such portfolios</strong>. For <strong>each number of good companies (X-Axis)</strong>, the following figure (called a histogram) tells you <strong>how many of the portfolios</strong>&nbsp;<strong>(Y-Axis)</strong> have that number of good companies. The <b>average</b> number of good companies for portfolios in this collection is <strong>50</strong>.
+         </p>   
+         <br>
+            
+            <strong>The portfolios you see in this experiment will come from this collection of portfolios.</strong> <br>
+            <img width="400" src="http://christinasun.net/asset_hosting_service/matrix_graphs/dist_histogram.png" height="400">
+            <br>
+        <p>
+            The interface will represent each portfolio as a <strong>square grid of 100 dots</strong>, where each dot&nbsp;is either <strong>black or red</strong>.
+
+        </p><br>
+            <ul>
+            <li>The <b>number of good companies</b>&nbsp;of a portfolio is equal to the&nbsp;<strong>number of red dots&nbsp;</strong>in the square grid.</li>
+            <li>The <b>number of </b><strong>bad companies</strong> is equal to the <b>number of</b> <strong>black dots.</strong></li>
+            <li>The location of the red and black dots are&nbsp;<strong>RANDOMLY DETERMINED.</strong></li>
+            <li>The following is an example of a portfolio:</li>
+            </ul>
+            <img src="https://ucdavis.co1.qualtrics.com/CP/Graphic.php?IM=IM_XHKAIMKHtFUho16" style="width: 348px; height: 348px;">
+    </div>
+<!-- --------------------------------------------------------------------------- -->
+ 
+    <!-- <button type="button" class="collapsible">Investment Game Overview</button>
+    <div class="content">    
+     
+
+
+    </div> -->
+    <!-- --------------------------------------------------------------------------- -->
+
     <button type="button" class="collapsible">Summary of A Round</button>
     <div class="content">
         <p>
-            In each round, you will encounter 2 investment portfolios. Each portfolio contains 100 companies, represented by 100 dots. Good companies are red dots, and bad companies are black dots. 
+            In each round, you will encounter 2 investment portfolios. Each portfolio contains 100 companies, represented by 100 dots. Good companies are red dots, and bad companies are black dots.
         </p>
+        <br>
+        <p>
+            When a round begins, the interface will select <strong>2 portfolios</strong>&nbsp;that are&nbsp;<b>RANDOMLY DRAWN</b>&nbsp;from the collection of 1000 portfolios. Each portfolio contains <b>100 companies</b>. The pair of portfolios are re-selected every round.
+        </p>
+       <br>
+        <p>
+             In a given round you will complete 3 tasks:
+        </p>        
+
+        <ol>
+         <li>See half portfolios, and Guess the number of good companies in the half portfolios</li>
+         <li>See complete portfolios, and Guess the number of good companies in the complete portfolios</li>
+         <li>Invest in a&nbsp;portfolio</li>
+        </ol><br>
 
         <p>
-            In short, in a given round you will complete tasks in 3 stages:
-
+            To maximize your earning you should <strong>INVEST</strong> in the portfolio that you <strong>JUDGE</strong> to have more good companies.
         </p>
+        
+        <p>
+            The <b>order</b> of tasks 2 and 3 might <b>differ</b> in different rounds:
 
-                <ol>
-                    <li>See half portfolios, and Guess the number of good companies in the incomplete half portfolios</li>
-                    <li>See complete portfolios, and Guess the number of good companies in the complete portfolios</li>
-                    <li>Invest in one&nbsp;portfolio</li>
-                </ol>
-            </p>
-            
-            <p>
-                The <b>order</b> of the stages 2 and 3 might <b>differ</b> in different rounds:
-            </p>
-
-            <p>
-                <ul>
-                    <li>In some rounds, you will encounter <em>See Half Portfolios</em> --&gt; <em>See Full Portfolios</em> --&gt; <em>Invest</em></li>
-                    <li>In other rounds, you will encounter <em>See Half Portfolios</em>  --&gt; <em>Invest</em> --&gt; <em>See Full Portfolios</em></li>
-                    </ul>
-            </p>
-            <p>
-                Therefore, please pay attention to the instruction in each round.
-
-            </p>
-       </p>
+        </p>        
+        <ul>
+         <li>In some rounds, you will encounter<em>&nbsp;Half Portfolios</em> --&gt;<em>&nbsp;Complete Portfolios</em> --&gt; <em>Investment</em></li>
+         <li>In other rounds, you will encounter<em>&nbsp;Half Portfolios</em> --&gt; <em>Investment</em> --&gt;<em>&nbsp;Complete Portfolios</em></li>
+        </ul><b>
+        Therefore, please pay attention to the instruction in each round.</b>
         
         
     </div>
-    
-        <button type="button" class="collapsible">Instructions on Your Payoff</button>
+    <!-- --------------------------------------------------------------------------- -->
+
+        <button type="button" class="collapsible">How to Earn Bonus Money</button>
     <div class="content">
 
+
+        <h4>Bonus for Investment in Chosen Round</h4>
+
+        <ul>
+            <li>At the end of the experiment, <strong>one round</strong> will be <strong>randomly selected </strong>to calculate your bonus payment.</li>
+            <li>In this selected round, if your investment was successful&nbsp;(i.e., you invested in the portfolio with more good companies), you will earn a bonus of <strong>$${e://Field/choice_bonus}.&nbsp;</strong>If your investment failed, you will earn <strong>$0</strong> bonus.</li>
+        </ul>
+
+        <h4>Bonus for Guess in Chosen Round</h4>
+
+        <ul>
+          <li>One of your guesses in the selected round will be randomly chosen for payment. </li>
+          <li>If your guess&nbsp;is <strong>no further than ${e://Field/belief_error_bound}</strong>&nbsp;from the<strong> actual number,</strong> you will receive a bonus of <strong>$${e://Field/belief_bonus}.</strong></li>
+        </ul>
+
+        <h4>Bonus for Game Winners</h4>
+
+        <ul>
+        <li>At the end of the experiment, you will receive an investment score that is equal to the total number of successful investments you made (a number between 0 and&nbsp;${e://Field/num_rounds}).</li>
+        <li>Participants with the top ${e://Field/num_winners} investment scores will win the game, and receive a <strong>$${e://Field/win_bonus}</strong> bonus each.</li>
+        </ul>
+
         <p>
-            <ul>
-                <li>At the end of the experiment, <strong>one round</strong> will be <strong>randomly selected </strong>to calculate your bonus payment.</li>
-                <li>In this selected round, if you&nbsp;successfully <strong>chose to invest </strong>in the<strong> better portfolio</strong> (i.e., the portfolio with more good companies), you will earn a bonus of <strong>$${e://Field/choice_bonus}.&nbsp;</strong>If you invested in the <strong>worse</strong> portfolio, you will earn <strong>$0</strong> bonus.</li>
-                <li>One of the two portfolios in that round is randomly selected, and one of your guesses&nbsp;on the number of good companies in that portfolio&nbsp;will be randomly chosen. If your guess&nbsp;is <strong>no further than 5</strong> from the<strong> true number,</strong> you will receive a bonus of <strong>$${e://Field/belief_bonus}.</strong>
-                <ul>
-                 <li>For example, if the true number of good companies in the portfolio is 63, then you will receive&nbsp;$${e://Field/belief_bonus} if you report any number between (and including) 58 and 68.&nbsp;</li>
-                 <li>However, if your guess is any other number, you will receive $0.&nbsp;</li>
-                </ul>
-                </li>
-                <li>This payment scheme means that you should <strong>treat each round as if it would be used for payment</strong>, and try your best to <strong>make your best judgments and best guesses</strong>.</li>
-                <li>The bonus you earn will be calculated after you complete the experiment, and will be paid to you within one week of your completion.</li>
-               </ul>
+            The bonus you earn will be calculated after you complete the experiment, and will be paid to you within one week of your completion.
+
         </p>
+
+
     </div>
 
 

@@ -106,6 +106,14 @@ Qualtrics.SurveyEngine.setEmbeddedData('earned_belief_bonus', earned_belief_bonu
 Qualtrics.SurveyEngine.setEmbeddedData('earned_total_bonus', earned_choice_bonus + earned_belief_bonus);
 
 
+// calculate investment score
+var invest_score = 0;
+for (let i = 0; i < num_rounds; i++) {
+    let round = i + 1;
+    invest_score += parseInt(Qualtrics.SurveyEngine.getEmbeddedData('success_round' + round));
+}
+
+Qualtrics.SurveyEngine.setEmbeddedData('invest_score', invest_score);
 
 
-console.log('after running')
+console.log('after running');

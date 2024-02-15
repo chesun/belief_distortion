@@ -16,4 +16,25 @@ Qualtrics.SurveyEngine.addOnPageSubmit(function()
       Qualtrics.SurveyEngine.setEmbeddedData('current_loop_investment', "Portfolio B");
       Qualtrics.SurveyEngine.setEmbeddedData("invest_round" + currentLoop, "B");
   }
+
+  // calculate if investment successful
+  var actual_red_A = parseInt("${lm://Field/5}");
+  var actual_red_B = parseInt("${lm://Field/10}");
+  if (actual_red_A > actual_red_B) {
+    if (investment == "1") {
+      Qualtrics.SurveyEngine.setEmbeddedData('success_round' + currentLoop, 1);
+    }
+    else {
+      Qualtrics.SurveyEngine.setEmbeddedData('success_round' + currentLoop, 0);
+    }
+  }
+  else {
+    if (investment == "1") {
+      Qualtrics.SurveyEngine.setEmbeddedData('success_round' + currentLoop, 0);
+    }
+    else {
+      Qualtrics.SurveyEngine.setEmbeddedData('success_round' + currentLoop, 1);
+    }
+  }
 });
+

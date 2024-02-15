@@ -1,0 +1,157 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/explore_pilot3.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}12 Feb 2024, 11:52:57
+{txt}
+{com}. 
+. graph drop _all
+{txt}
+{com}. set more off
+{txt}
+{com}. set varabbrev off
+{txt}
+{com}. set graphics off
+{txt}
+{com}. set scheme s1color
+{txt}
+{com}. set seed 1984
+{txt}
+{com}. 
+. import delimited $datadir/raw/pilot_3_feb_7_2024_import_ready.csv, varnames(1) clear
+{res}{text}(1,969 vars, 11 obs)
+
+{com}. 
+. 
+. 
+. 
+. //-----------------------------------------------------
+. // initial cleaning
+. //-----------------------------------------------------
+. // drop all timing data
+. drop *click *pagesubmit *clickcount
+{txt}
+{com}. 
+. // drop practice round data and quiz answers
+. drop loop1_q34_1 - q67 current_loop* current_practice*
+{txt}
+{com}. 
+. // drop admin variables
+. drop startdate-progress finished recordeddate distributionchannel-q4
+{txt}
+{com}. 
+. // drop prolific ID question, use embedded data
+. drop q5
+{txt}
+{com}. 
+. // drop loop question answers, use embedded data
+. drop loop*
+{txt}
+{com}. 
+. // drop unused round embedded data
+. forvalues i = 13/20 {c -(}
+{txt}  2{com}.     drop *round`i'
+{txt}  3{com}.     drop *loop`i'
+{txt}  4{com}. {c )-}
+{txt}
+{com}. 
+. // create a var for failing the quiz, this becomes an embedded data field in pilot 4
+. // in pilot3 the max number of failed tries for each quiz question is 2
+. gen quiz_failed = 0
+{txt}
+{com}. 
+. forvalues quiznum = 1/9 {c -(}
+{txt}  2{com}.     replace quiz_failed = 1 if errors_quiz_q`quiznum' >= 3
+{txt}  3{com}. {c )-}
+{txt}(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(2 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+
+{com}. 
+. drop if quiz_failed == 1
+{txt}(2 observations deleted)
+
+{com}. 
+. //--------------------------------------------
+. // calculate investment game scores
+. //---------------------------------------------
+. gen invest_score = 0
+{txt}
+{com}. forvalues round = 1/12 {c -(}
+{txt}  2{com}.     gen success_round`round' = 0
+{txt}  3{com}.     replace success_round`round' = 1 if ///
+>         ((actual_red_a_round`round' > actual_red_b_round`round') & invest_round`round' == "A") ///
+>         | ((actual_red_a_round`round' < actual_red_b_round`round') & invest_round`round' == "B")
+{txt}  4{com}.     replace invest_score = invest_score + success_round`round'
+{txt}  5{com}. {c )-}
+{txt}(8 real changes made)
+(8 real changes made)
+(8 real changes made)
+(8 real changes made)
+(7 real changes made)
+(7 real changes made)
+(6 real changes made)
+(6 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(8 real changes made)
+(8 real changes made)
+(7 real changes made)
+(7 real changes made)
+(8 real changes made)
+(8 real changes made)
+(6 real changes made)
+(6 real changes made)
+(7 real changes made)
+(7 real changes made)
+
+{com}. 
+. sort invest_score
+{txt}
+{com}. gen earned_game_bonus = 0
+{txt}
+{com}. sum win_bonus
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 3}win_bonus {c |}{res}          9           4           0          4          4
+{txt}
+{com}. replace earned_game_bonus = r(max) if _n <= 3
+{txt}(3 real changes made)
+
+{com}. // export investment game score to csv
+. preserve 
+{txt}
+{com}. keep responseid prolific_pid earned_game_bonus earned_belief_bonus earned_invest_bonus
+{txt}
+{com}. export delimited using $datadir/clean/pilot3_bonus.csv, replace 
+{res}{txt}(note: file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot3_bonus.csv not found)
+{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot3_bonus.csv saved
+
+{com}. restore
+{txt}
+{com}. 
+. save $datadir/clean/pilot_3_clean.dta, replace
+{txt}(note: file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_3_clean.dta not found)
+file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_3_clean.dta saved
+
+{com}. 
+. log close 
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/explore_pilot3.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}12 Feb 2024, 11:52:57
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

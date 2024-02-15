@@ -18,6 +18,10 @@ Qualtrics.SurveyEngine.addOnPageSubmit(function()
     Qualtrics.SurveyEngine.setEmbeddedData("actual_red_A_round" + currentLoop, "${lm://Field/5}");
     Qualtrics.SurveyEngine.setEmbeddedData("actual_red_B_round" + currentLoop, "${lm://Field/10}");
 
+    // actual number of red in half portfolios
+    Qualtrics.SurveyEngine.setEmbeddedData("actual_red_half_A_round" + currentLoop, "${lm://Field/3}");
+    Qualtrics.SurveyEngine.setEmbeddedData("actual_red_half_B_round" + currentLoop, "${lm://Field/8}");
+ 
 
     // update autofill display
     jQuery("#complete_A").text(parseInt(guess_A_half) * 2);
