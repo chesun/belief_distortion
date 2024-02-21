@@ -1,0 +1,324 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_pilot4_5.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}21 Feb 2024, 12:05:38
+{txt}
+{com}. 
+. graph drop _all
+{txt}
+{com}. set more off
+{txt}
+{com}. set varabbrev off
+{txt}
+{com}. set graphics off
+{txt}
+{com}. set scheme s1color
+{txt}
+{com}. set seed 1984
+{txt}
+{com}. 
+. foreach pilotnum in 4 5 {c -(}
+{txt}  2{com}.     import delimited $datadir/raw/pilot_`pilotnum'_import_ready.csv, varnames(1) clear
+{txt}  3{com}. 
+.     //-----------------------------------------------------
+.     // initial cleaning
+.     //-----------------------------------------------------
+. 
+.     //-----------drop observations-------------
+.     // drop obs missing prolific id
+.     drop if prolific_pid == ""
+{txt}  4{com}.     // drop obs who declined consent
+.     drop if q4 == "No, I do not wish to participate in this study"
+{txt}  5{com}.     // drop likely duplicates
+.     keep if q_relevantidduplicatescore < 75
+{txt}  6{com}.     // drop obs that are likely bots
+.     drop if q_relevantidfraudscore >= 30
+{txt}  7{com}.     drop if q_recaptchascore <= 0.5
+{txt}  8{com}.     // drop if failed quiz
+.     keep if quiz_failed==0
+{txt}  9{com}.     // keep if finished
+.     keep if finished == "TRUE"
+{txt} 10{com}. 
+.     //----------- drop variables --------------
+. 
+.     // drop all timing data
+.     drop *click *pagesubmit *clickcount
+{txt} 11{com}.     // drop all questions except demographics and embedded data
+.     drop q_relevantidlaststartdate - which_not_understand
+{txt} 12{com}.     // drop practice rounds embedded data
+.     drop current* practice* chosen*
+{txt} 13{com}. 
+.     // drop other survey admin variables
+.     drop startdate - progress finished userlanguage - q_relevantidfraudscore distributionchannel
+{txt} 14{com}. 
+.     // pilot4 already has a built in embedded data field for quiz_failed, calculate total errors
+.     gen quiz_errors_total = 0
+{txt} 15{com}.     forvalues quiznum = 1/9 {c -(}
+{txt} 16{com}.         replace quiz_errors_total = quiz_errors_total + errors_quiz_q`quiznum'
+{txt} 17{com}.     {c )-}
+{txt} 18{com}. 
+.     // drop round 11 and 12, only 10 rounds in pilot4
+.     drop *loop11 *loop12 *round11 *round12
+{txt} 19{com}. 
+.     // calculate game winner bonuses
+.     gsort -invest_score
+{txt} 20{com}.     gen earned_game_bonus = 0
+{txt} 21{com}.     sum win_bonus
+{txt} 22{com}.     replace earned_game_bonus = r(max) if _n <= 3
+{txt} 23{com}.     gen earned_bonus_all = earned_game_bonus + earned_belief_bonus + earned_invest_bonus
+{txt} 24{com}.     // export investment game score to csv
+.     preserve 
+{txt} 25{com}.     keep responseid prolific_pid invest_score earned_bonus_all earned_game_bonus earned_belief_bonus earned_invest_bonus 
+{txt} 26{com}.     export delimited using $datadir/clean/pilot`pilotnum'_bonus.csv, replace 
+{txt} 27{com}.     restore
+{txt} 28{com}. 
+.     // reshape into long format for analysis
+.     reshape long treat_loop task_id_loop ///
+>         guess_1_a_round guess_1_b_round ///
+>         actual_red_a_round actual_red_b_round ///
+>         guess_2_a_round guess_2_b_round ///
+>         invest_round success_round, i(responseid) j(round)
+{txt} 29{com}. 
+.     rename guess_1_a_round guess_1_a 
+{txt} 30{com}.     rename guess_1_b_round guess_1_b
+{txt} 31{com}.     rename actual_red_a_round actual_red_a
+{txt} 32{com}.     rename actual_red_b_round actual_red_b
+{txt} 33{com}.     rename guess_2_a_round guess_2_a 
+{txt} 34{com}.     rename guess_2_b_round guess_2_b
+{txt} 35{com}.     rename invest_round invest
+{txt} 36{com}.     rename success_round success 
+{txt} 37{com}. 
+.     rename treatment treat_block 
+{txt} 38{com}. 
+.     gen sessionid = `pilotnum'
+{txt} 39{com}. 
+. 
+. 
+.     //------ demographics and embedded data are left here-----------
+. 
+.     /* in this data, no one wrote in gender */
+.     drop gender_6_text
+{txt} 40{com}. 
+.     // keep only choice and belief data demographics, and experiment setup parameters
+.     keep responseid - recordeddate ///
+>         rses* list_exp* race - gender ///
+>         num_rounds invest_score treat* task_id* guess* actual* quiz* invest success sessionid
+{txt} 41{com}. 
+.     drop quiz_failed
+{txt} 42{com}.     // get actual red numbers from merging the matrix set records, discard the embedded data.
+.     drop actual_red*
+{txt} 43{com}.     
+. 
+.     order responseid round guess* treat* task* invest success sessionid
+{txt} 44{com}. 
+.     save $datadir/clean/pilot_`pilotnum'_init_clean.dta, replace
+{txt} 45{com}. {c )-}
+{res}{text}(1,687 vars, 12 obs)
+(1 observation deleted)
+(1 observation deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1 observation deleted)
+(0 observations deleted)
+(1 real change made)
+(4 real changes made)
+(0 real changes made)
+(0 real changes made)
+(4 real changes made)
+(5 real changes made)
+(1 real change made)
+(0 real changes made)
+(2 real changes made)
+
+    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 3}win_bonus {c |}{res}          9           4           0          4          4
+{txt}(3 real changes made)
+{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot4_bonus.csv saved
+(note: j = 1 2 3 4 5 6 7 8 9 10)
+
+Data{col 36}wide{col 43}->{col 48}long
+{hline 77}
+Number of obs.                 {res}       9   {txt}->{res}      90
+{txt}Number of variables            {res}     195   {txt}->{res}     106
+{txt}j variable (10 values)                    ->   {res}round
+{txt}xij variables:
+{res}treat_loop1 treat_loop2 ... treat_loop10  {txt}->   {res}treat_loop
+task_id_loop1 task_id_loop2 ... task_id_loop10{txt}->{res}task_id_loop
+guess_1_a_round1 guess_1_a_round2 ... guess_1_a_round10{txt}->{res}guess_1_a_round
+guess_1_b_round1 guess_1_b_round2 ... guess_1_b_round10{txt}->{res}guess_1_b_round
+actual_red_a_round1 actual_red_a_round2 ... actual_red_a_round10{txt}->{res}actual_red_a_round
+actual_red_b_round1 actual_red_b_round2 ... actual_red_b_round10{txt}->{res}actual_red_b_round
+guess_2_a_round1 guess_2_a_round2 ... guess_2_a_round10{txt}->{res}guess_2_a_round
+guess_2_b_round1 guess_2_b_round2 ... guess_2_b_round10{txt}->{res}guess_2_b_round
+invest_round1 invest_round2 ... invest_round10{txt}->{res}invest_round
+success_round1 success_round2 ... success_round10{txt}->{res}success_round
+{txt}{hline 77}
+{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_4_init_clean.dta saved
+{res}{text}(1,604 vars, 72 obs)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(7 observations deleted)
+(1 observation deleted)
+(19 observations deleted)
+(0 observations deleted)
+(3 real changes made)
+(13 real changes made)
+(2 real changes made)
+(1 real change made)
+(8 real changes made)
+(20 real changes made)
+(7 real changes made)
+(1 real change made)
+(10 real changes made)
+
+    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 3}win_bonus {c |}{res}         45           4           0          4          4
+{txt}(3 real changes made)
+{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot5_bonus.csv saved
+(note: j = 1 2 3 4 5 6 7 8 9 10)
+
+Data{col 36}wide{col 43}->{col 48}long
+{hline 77}
+Number of obs.                 {res}      45   {txt}->{res}     450
+{txt}Number of variables            {res}     200   {txt}->{res}     111
+{txt}j variable (10 values)                    ->   {res}round
+{txt}xij variables:
+{res}treat_loop1 treat_loop2 ... treat_loop10  {txt}->   {res}treat_loop
+task_id_loop1 task_id_loop2 ... task_id_loop10{txt}->{res}task_id_loop
+guess_1_a_round1 guess_1_a_round2 ... guess_1_a_round10{txt}->{res}guess_1_a_round
+guess_1_b_round1 guess_1_b_round2 ... guess_1_b_round10{txt}->{res}guess_1_b_round
+actual_red_a_round1 actual_red_a_round2 ... actual_red_a_round10{txt}->{res}actual_red_a_round
+actual_red_b_round1 actual_red_b_round2 ... actual_red_b_round10{txt}->{res}actual_red_b_round
+guess_2_a_round1 guess_2_a_round2 ... guess_2_a_round10{txt}->{res}guess_2_a_round
+guess_2_b_round1 guess_2_b_round2 ... guess_2_b_round10{txt}->{res}guess_2_b_round
+invest_round1 invest_round2 ... invest_round10{txt}->{res}invest_round
+success_round1 success_round2 ... success_round10{txt}->{res}success_round
+{txt}{hline 77}
+{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_5_init_clean.dta saved
+
+{com}. 
+. 
+. 
+. // append pilot4 and pilot5 data
+. use $datadir/clean/pilot_4_init_clean.dta, clear 
+{txt}
+{com}. append using $datadir/clean/pilot_5_init_clean.dta
+{txt}{p 0 7 2}
+(note: variable
+rses_1 was 
+str14, now str17 to accommodate using data's values)
+{p_end}
+{p 0 7 2}
+(note: variable
+rses_4 was 
+str14, now str17 to accommodate using data's values)
+{p_end}
+{p 0 7 2}
+(note: variable
+rses_7 was 
+str14, now str17 to accommodate using data's values)
+{p_end}
+{p 0 7 2}
+(note: variable
+rses_10 was 
+str14, now str17 to accommodate using data's values)
+{p_end}
+{p 0 7 2}
+(note: variable
+list_exp_1 was 
+str5, now str8 to accommodate using data's values)
+{p_end}
+{p 0 7 2}
+(note: variable
+race was 
+str25, now str67 to accommodate using data's values)
+{p_end}
+{p 0 7 2}
+(note: variable
+gender was 
+str5, now str10 to accommodate using data's values)
+{p_end}
+
+{com}. 
+. /* // create aligned version of the guess 2 variable: so that A and B portfolios are the same between treatments
+> // in the survey they are swapped between treatments
+> foreach letter in a b {c -(}
+>     gen guess_2_`letter'_align = guess_2_`letter' if treat_loop == "baseline"
+>     gen guess_1_`letter'_align = guess_1_`letter' if treat_loop == "baseline"
+> 
+>     gen actual_red_`letter'_align = actual_red_`letter' if treat_loop == "baseline"
+> {c )-}
+> 
+> replace guess_2_a_align = guess_2_b if treat_loop == "control"
+> replace guess_2_b_align = guess_2_a if treat_loop == "control"
+> 
+> replace guess_1_a_align = guess_1_b if treat_loop == "control"
+> replace guess_1_b_align = guess_1_a if treat_loop == "control"
+> 
+> replace actual_red_a_align = actual_red_b if treat_loop == "control"
+> replace actual_red_b_align = actual_red_a if treat_loop == "control"
+> 
+> // aligned investment (swap investment between A and B for control)
+> 
+> 
+> // create numeric dummies for investment and treatment variables
+> gen invest_a = 0 if invest == "B"
+> replace invest_a = 1 if invest == "A"
+> label var invest_a "Invest in A"
+> 
+> gen r_treat = 1 if treat_loop == "baseline"
+> replace r_treat = 0 if treat_loop == "control"
+> label var r_treat "treatment round"
+> 
+> gen b_treat = 1 if treat_block == "baseline"
+> replace b_treat = 0 if treat_block == "control"
+> label var b_treat "treatment block"
+> 
+> // make value labels for the treatment variables 
+> label define treatlab 0 "Control" 1 "Treatment"
+> 
+> label values r_treat treatlab
+> label values b_treat treatlab
+> 
+> // rename the aligned variables
+> rename guess_2_?_align post_?
+> rename guess_1_?_align prior_?
+> 
+> rename actual_red_?_align true_?
+> 
+> gen diff_1 = prior_a - prior_b
+> label var diff_1 "Guess 1 Diff (A-B)"
+> gen diff_2 = post_a - post_b
+> label var diff_2 "Guess 2 Diff (A-B)"
+> 
+>  */
+. 
+. 
+. 
+. // append guesses for portfolio A and B
+. preserve 
+{txt}
+{com}. 
+. save $datadir/clean/pilot_4_5_append_init_clean.dta, replace 
+{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_4_5_append_init_clean.dta saved
+
+{com}. 
+. 
+. 
+. 
+. 
+. 
+. log close 
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_pilot4_5.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}21 Feb 2024, 12:05:38
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

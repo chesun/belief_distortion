@@ -2,7 +2,7 @@
 Goals:
 1. check guess accuracy, bonus rate too high */
 
-import delimited $datadir/raw/pilot_1_jan_24_2024.csv, clear
+import delimited $datadir/raw/pilot_1_jan_24_2024_import_ready.csv, clear
 
 // drop all the timing questions
 drop *firstclick *lastclick *pagesubmit *clickcount

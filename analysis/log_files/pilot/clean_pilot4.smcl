@@ -1,0 +1,162 @@
+{smcl}
+{txt}{sf}{ul off}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_pilot4.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}18 Feb 2024, 16:30:14
+{txt}
+{com}. 
+. graph drop _all
+{txt}
+{com}. set more off
+{txt}
+{com}. set varabbrev off
+{txt}
+{com}. set graphics off
+{txt}
+{com}. set scheme s1color
+{txt}
+{com}. set seed 1984
+{txt}
+{com}. 
+. import delimited $datadir/raw/pilot_4_import_ready.csv, varnames(1) clear
+{res}{text}(1,687 vars, 12 obs)
+
+{com}. 
+. //-----------------------------------------------------
+. // initial cleaning
+. //-----------------------------------------------------
+. 
+. //-----------drop observations-------------
+. // drop obs missing prolific id
+. drop if prolific_pid == ""
+{txt}(1 observation deleted)
+
+{com}. // drop obs who declined consent
+. drop if q4 == "No, I do not wish to participate in this study"
+{txt}(1 observation deleted)
+
+{com}. // drop likely duplicates
+. drop if q_relevantidduplicate == "TRUE" | q_relevantidduplicatescore >= 75
+{txt}(0 observations deleted)
+
+{com}. // drop obs that are likely bots
+. drop if q_relevantidfraudscore >= 30
+{txt}(0 observations deleted)
+
+{com}. drop if q_recaptchascore <= 0.5
+{txt}(0 observations deleted)
+
+{com}. // drop if failed quiz
+. keep if quiz_failed==0
+{txt}(1 observation deleted)
+
+{com}. // keep if finished
+. keep if finished == "TRUE"
+{txt}(0 observations deleted)
+
+{com}. 
+. //----------- drop variables --------------
+. 
+. // drop all timing data
+. drop *click *pagesubmit *clickcount
+{txt}
+{com}. // drop all questions except demographics and embedded data
+. drop q_relevantidlaststartdate - v1410
+{txt}
+{com}. // drop practice rounds embedded data
+. drop current* practice* chosen*
+{txt}
+{com}. 
+. // drop other survey admin variables
+. drop startdate - progress finished userlanguage - q_relevantidfraudscore distributionchannel
+{txt}
+{com}. 
+. // pilot4 already has a built in embedded data field for quiz_failed, calculate total errors
+. gen quiz_errors_total = 0
+{txt}
+{com}. forvalues quiznum = 1/9 {c -(}
+{txt}  2{com}.     replace quiz_errors_total = quiz_errors_total + errors_quiz_q`quiznum'
+{txt}  3{com}. {c )-}
+{txt}(1 real change made)
+(4 real changes made)
+(0 real changes made)
+(0 real changes made)
+(4 real changes made)
+(5 real changes made)
+(1 real change made)
+(0 real changes made)
+(2 real changes made)
+
+{com}. 
+. // drop round 11 and 12, only 10 rounds in pilot4
+. drop *loop11 *loop12 *round11 *round12
+{txt}
+{com}. 
+. // reshape into long format for analysis
+. reshape long treat_loop task_id_loop ///
+>     guess_1_a_round guess_1_b_round ///
+>     actual_red_a_round actual_red_b_round ///
+>     guess_2_a_round guess_2_b_round ///
+>     invest_round success_round, i(responseid) j(round)
+{txt}(note: j = 1 2 3 4 5 6 7 8 9 10)
+
+Data{col 36}wide{col 43}->{col 48}long
+{hline 77}
+Number of obs.                 {res}       9   {txt}->{res}      90
+{txt}Number of variables            {res}     196   {txt}->{res}     107
+{txt}j variable (10 values)                    ->   {res}round
+{txt}xij variables:
+{res}treat_loop1 treat_loop2 ... treat_loop10  {txt}->   {res}treat_loop
+task_id_loop1 task_id_loop2 ... task_id_loop10{txt}->{res}task_id_loop
+guess_1_a_round1 guess_1_a_round2 ... guess_1_a_round10{txt}->{res}guess_1_a_round
+guess_1_b_round1 guess_1_b_round2 ... guess_1_b_round10{txt}->{res}guess_1_b_round
+actual_red_a_round1 actual_red_a_round2 ... actual_red_a_round10{txt}->{res}actual_red_a_round
+actual_red_b_round1 actual_red_b_round2 ... actual_red_b_round10{txt}->{res}actual_red_b_round
+guess_2_a_round1 guess_2_a_round2 ... guess_2_a_round10{txt}->{res}guess_2_a_round
+guess_2_b_round1 guess_2_b_round2 ... guess_2_b_round10{txt}->{res}guess_2_b_round
+invest_round1 invest_round2 ... invest_round10{txt}->{res}invest_round
+success_round1 success_round2 ... success_round10{txt}->{res}success_round
+{txt}{hline 77}
+
+{com}. 
+. rename guess_1_a_round guess_1_a 
+{res}{txt}
+{com}. rename guess_1_b_round guess_1_b
+{res}{txt}
+{com}. rename actual_red_a_round actual_red_a
+{res}{txt}
+{com}. rename actual_red_b_round actual_red_b
+{res}{txt}
+{com}. rename guess_2_a_round guess_2_a 
+{res}{txt}
+{com}. rename guess_2_b_round guess_2_b
+{res}{txt}
+{com}. rename invest_round invest
+{res}{txt}
+{com}. rename success_round success 
+{res}{txt}
+{com}. 
+. rename treatment treat_block 
+{res}{txt}
+{com}. 
+. gen session = "pilot4"
+{txt}
+{com}. 
+. //------ demographics and embedded data are left here-----------
+. 
+. // keep only choice and belief data, and experiment setup parameters
+. /* drop how_guess - belief_first_or_second  */
+. keep responseid - recordeddate invest_score - session
+{txt}
+{com}. 
+. 
+. 
+. log close 
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_pilot4.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}18 Feb 2024, 16:30:14
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

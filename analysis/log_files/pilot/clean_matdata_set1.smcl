@@ -1,0 +1,117 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_matdata_set1.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}21 Feb 2024, 11:38:31
+{txt}
+{com}. 
+. graph drop _all
+{txt}
+{com}. set more off
+{txt}
+{com}. set varabbrev off
+{txt}
+{com}. set graphics off
+{txt}
+{com}. set scheme s1color
+{txt}
+{com}. set seed 1984
+{txt}
+{com}. 
+. import delimited $datadir/raw/set_1_lm_settings.csv, varnames(1) clear
+{res}{text}(8 vars, 20 obs)
+
+{com}. 
+. 
+. // dummy for top or bottom half shown
+. gen top = 1 if mat_half == "top"
+{txt}(10 missing values generated)
+
+{com}. replace top = 0 if mat_half == "bottom"
+{txt}(10 real changes made)
+
+{com}. 
+. // rename vars
+. rename mat_1_red_half half_a
+{res}{txt}
+{com}. rename mat_1_red_total full_a
+{res}{txt}
+{com}. 
+. rename mat_2_red_half half_b
+{res}{txt}
+{com}. rename mat_2_red_total full_b
+{res}{txt}
+{com}. 
+. drop pair_number mat_half treatment 
+{txt}
+{com}. 
+. preserve
+{txt}
+{com}. 
+. // make a temp dataset for left matrices (portfolio A in the experiment)
+. keep *_a task_id top 
+{txt}
+{com}. gen left = 1 
+{txt}
+{com}. label var left "Left Portfolio (Portfolio A)"
+{txt}
+{com}. rename half_a half 
+{res}{txt}
+{com}. rename full_a full 
+{res}{txt}
+{com}. 
+. tempfile a 
+{txt}
+{com}. save `a'
+{txt}file /var/folders/2b/ktlsm5rd4w987t9sp7jylmg80000gn/T//S_80665.000004 saved
+
+{com}. 
+. restore 
+{txt}
+{com}. 
+. // make a dataset for right matrices (Portfolio B in the experiment)
+. keep *_b task_id top 
+{txt}
+{com}. gen left = 0
+{txt}
+{com}. label var left "Left Portfolio (Portfolio A)"
+{txt}
+{com}. rename half_b half 
+{res}{txt}
+{com}. rename full_b full 
+{res}{txt}
+{com}. 
+. append using `a'
+{txt}
+{com}. 
+. label define leftlab 0 "Right (B)" 1 "Left (A)"
+{txt}
+{com}. label values left leftlab 
+{txt}
+{com}. 
+. label var half "True Red in Half"
+{txt}
+{com}. label var full "True Red in Full"
+{txt}
+{com}. 
+. label var top "Top or Bottom Half"
+{txt}
+{com}. 
+. save $datadir/clean/matdata_set1_clean.dta, replace 
+{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/matdata_set1_clean.dta saved
+
+{com}. 
+. 
+. 
+. 
+. 
+. 
+. log close 
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_matdata_set1.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}21 Feb 2024, 11:38:31
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

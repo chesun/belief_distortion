@@ -67,7 +67,7 @@ forvalues round = 1/12 {
     replace invest_score = invest_score + success_round`round'
 }
 
-sort invest_score
+gsort -invest_score
 gen earned_game_bonus = 0
 sum win_bonus
 replace earned_game_bonus = r(max) if _n <= 3
@@ -98,14 +98,16 @@ rename success_round success
 
 rename treatment treat_block 
 
-gen change_a = guess_2_a - guess_1_a
-gen change_b = guess_2_b - guess_1_b
+gen session = "pilot3"
+
 
 twoway (scatter guess_1_a actual_red_a if treat_loop=="baseline", yscale(range(0 100)) xscale(range(0 100))) (scatter guess_1_a actual_red_a if treat_loop=="control", yscale(range(0 100)) xscale(range(0 100)) ), legend(label(1 "Treatment") label(2 "Control")) title("Portfolio A Guess 1")
 twoway (scatter guess_1_b actual_red_b if treat_loop=="baseline", yscale(range(0 100)) xscale(range(0 100))) (scatter guess_1_b actual_red_b if treat_loop=="control", yscale(range(0 100)) xscale(range(0 100)) ), legend(label(1 "Treatment") label(2 "Control")) title("Portfolio B Guess 1")
 
 
 ranksum guess_1_b, by(treat_loop)
+
+
 
 save $datadir/clean/pilot_3_clean.dta, replace
 
