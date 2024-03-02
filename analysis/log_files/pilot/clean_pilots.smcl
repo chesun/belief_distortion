@@ -1,0 +1,799 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_pilots.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}26 Feb 2024, 11:41:22
+{txt}
+{com}. 
+. graph drop _all
+{txt}
+{com}. set more off
+{txt}
+{com}. set varabbrev off
+{txt}
+{com}. set graphics off
+{txt}
+{com}. set scheme s1color
+{txt}
+{com}. set seed 1984
+{txt}
+{com}. 
+. foreach pilotnum in 4 5 6 {c -(}
+{txt}  2{com}.     import delimited $datadir/raw/pilot_`pilotnum'_import_ready.csv, varnames(1) clear
+{txt}  3{com}. 
+.     //-----------------------------------------------------
+.     // initial cleaning
+.     //-----------------------------------------------------
+. 
+.     //-----------drop observations-------------
+.     // drop obs missing prolific id
+.     drop if prolific_pid == ""
+{txt}  4{com}.     // drop obs who declined consent
+.     drop if q4 == "No, I do not wish to participate in this study"
+{txt}  5{com}.     // drop likely duplicates
+.     keep if q_relevantidduplicatescore < 75
+{txt}  6{com}.     // drop obs that are likely bots
+.     drop if q_relevantidfraudscore >= 30
+{txt}  7{com}.     drop if q_recaptchascore <= 0.5
+{txt}  8{com}.     // drop if failed quiz
+.     keep if quiz_failed==0
+{txt}  9{com}.     // keep if finished
+.     keep if finished == "TRUE"
+{txt} 10{com}. 
+.     //----------- drop variables --------------
+. 
+.     // drop all timing data
+.     drop *click *pagesubmit *clickcount
+{txt} 11{com}.     // drop all questions except demographics and embedded data
+.     drop q_relevantidlaststartdate - which_not_understand
+{txt} 12{com}.     // drop practice rounds embedded data
+.     drop current* practice* chosen*
+{txt} 13{com}. 
+.     // drop other survey admin variables
+.     drop startdate - progress finished userlanguage - q_relevantidfraudscore distributionchannel
+{txt} 14{com}. 
+.     // pilot4 already has a built in embedded data field for quiz_failed, calculate total errors
+.     gen quiz_errors_total = 0
+{txt} 15{com}.     forvalues quiznum = 1/9 {c -(}
+{txt} 16{com}.         replace quiz_errors_total = quiz_errors_total + errors_quiz_q`quiznum'
+{txt} 17{com}.     {c )-}
+{txt} 18{com}. 
+.     // drop round 11 and 12, only 10 rounds in pilot4
+.     drop *loop11 *loop12 *round11 *round12
+{txt} 19{com}. 
+.     // calculate game winner bonuses
+.     gsort -invest_score
+{txt} 20{com}.     gen earned_game_bonus = 0
+{txt} 21{com}.     sum win_bonus
+{txt} 22{com}.     replace earned_game_bonus = r(max) if _n <= 3
+{txt} 23{com}.     gen earned_bonus_all = earned_game_bonus + earned_belief_bonus + earned_invest_bonus
+{txt} 24{com}.     // export investment game score to csv
+.     preserve 
+{txt} 25{com}.     keep responseid prolific_pid invest_score earned_bonus_all earned_game_bonus earned_belief_bonus earned_invest_bonus 
+{txt} 26{com}.     export delimited using $datadir/clean/pilot`pilotnum'_bonus.csv, replace 
+{txt} 27{com}.     restore
+{txt} 28{com}. 
+.     // reshape into long format for analysis
+.     reshape long treat_loop task_id_loop ///
+>         guess_1_a_round guess_1_b_round ///
+>         actual_red_a_round actual_red_b_round ///
+>         actual_red_half_a_round actual_red_half_b_round ///
+>         guess_2_a_round guess_2_b_round ///
+>         invest_round success_round, i(responseid) j(round)
+{txt} 29{com}. 
+.     rename guess_1_a_round g1a 
+{txt} 30{com}.     rename guess_1_b_round g1b
+{txt} 31{com}.     rename actual_red_a_round full_a
+{txt} 32{com}.     rename actual_red_b_round full_b
+{txt} 33{com}.     rename actual_red_half_a_round half_a // pilot 4 doesn't have these embedded data
+{txt} 34{com}.     rename actual_red_half_b_round half_b
+{txt} 35{com}.     rename guess_2_a_round g2a 
+{txt} 36{com}.     rename guess_2_b_round g2b
+{txt} 37{com}.     rename invest_round invest
+{txt} 38{com}.     rename success_round success 
+{txt} 39{com}. 
+.     rename treatment treat_block 
+{txt} 40{com}. 
+. 
+.     //------ demographics and embedded data are left here-----------
+. 
+.     /* in this data, no one wrote in gender */
+.     drop gender_6_text
+{txt} 41{com}. 
+.     // keep only choice and belief data demographics, and experiment setup parameters
+.     keep responseid - recordeddate ///
+>         rses* list_exp* race - gender ///
+>         num_rounds invest_score treat* task_id* g?? full* quiz* invest success
+{txt} 42{com}. 
+.     drop quiz_failed
+{txt} 43{com}. 
+.     
+. 
+.     order responseid round g?? treat* task* invest success
+{txt} 44{com}. 
+.     //-------------------------------------------------
+.     // create numeric dummies for treatment variables
+.     //--------------------------------------------------
+.     gen r_treat = 1 if treat_loop == "baseline"
+{txt} 45{com}.     replace r_treat = 0 if treat_loop == "control"
+{txt} 46{com}.     label var r_treat "treatment round"
+{txt} 47{com}. 
+.     gen b_treat = 1 if treat_block == "baseline"
+{txt} 48{com}.     replace b_treat = 0 if treat_block == "control"
+{txt} 49{com}.     label var b_treat "treatment block"
+{txt} 50{com}. 
+.     // make value labels for the treatment variables 
+.     label define treatlab 0 "C" 1 "T"
+{txt} 51{com}. 
+.     label values r_treat treatlab
+{txt} 52{com}.     label values b_treat treatlab
+{txt} 53{com}. 
+.     // numeric dummy for invest in a
+.     gen invest_a = 0 if invest=="B"
+{txt} 54{com}.     replace invest_a = 1 if invest == "A"
+{txt} 55{com}. 
+.     // drop the string vars
+.     drop treat_block treat_loop 
+{txt} 56{com}. 
+.     rename task_id_loop task_id
+{txt} 57{com}. 
+.     //create a matrxi pair id
+.     gen pair_id = task_id if task_id<=10
+{txt} 58{com}.     replace pair_id = task_id - 10 if task_id > 10
+{txt} 59{com}. 
+.     //-----------------------------------------------------------------------------
+.     // exclude subjects in the treatment who did not invest in the right direction according to prior
+.     //-----------------------------------------------------------------------------
+.     gen diff_1 = g1a - g1b
+{txt} 60{com}.     label var diff_1 "Guess 1 Diff (A-B)"
+{txt} 61{com}.     gen diff_2 = g2a - g2b
+{txt} 62{com}.     label var diff_2 "Guess 2 Diff (A-B)"
+{txt} 63{com}.     // check if subjects understood the rules of the game: if they invested correctly based on their beliefs 
+.     gen dir_correct_round = 0
+{txt} 64{com}.     label var dir_correct_round "Invest according to belief in round"
+{txt} 65{com}.     // in treatment, investment should follow direction of priors 
+.     replace dir_correct_round = 1 if (invest_a==1 & diff_1 > 0 & r_treat==1) | (invest_a==0 & diff_1 < 0 & r_treat==1) 
+{txt} 66{com}.     replace dir_correct_round = 1 if (diff_1 == 0 & r_treat==1) // if priors are even in the treatment, either choice is justifiable
+{txt} 67{com}.     // in control, investment should follow direction of posteriors
+.     // if in control, they invested in A when they guessed A higher, and invested in B when they guessed B higher.
+.     replace dir_correct_round = 1 if (r_treat == 0 & invest_a == 1 & diff_2 > 0) | (r_treat == 0 & invest_a == 0 & diff_2 < 0)
+{txt} 68{com}.     replace dir_correct_round = . if r_treat == 0 & diff_2 == 0 // if posterior guesses are even, they did not understand the game
+{txt} 69{com}.     bysort responseid: egen dir_correct_subject = min(dir_correct_round)
+{txt} 70{com}.     label var dir_correct_subject "Subject always invest according to belief"
+{txt} 71{com}.     
+.     gen session_id = `pilotnum'
+{txt} 72{com}.     rename responseid response_id
+{txt} 73{com}. 
+. 
+.     //dummy for guess direction correct
+.     gen dc1 = 0
+{txt} 74{com}.     replace dc1 = 1 if (full_a > full_b & g1a > g1b) | (full_a < full_b & g1a < g1b)
+{txt} 75{com}. 
+.     gen dc2 = 0
+{txt} 76{com}.     replace dc2 = 1 if (full_a > full_b & g2a > g2b) | (full_a < full_b & g2a < g2b)
+{txt} 77{com}. 
+.     label define dc1lab 0 "Dir 1 Wrong" 1 "Dir 1 Correct"
+{txt} 78{com}.     label values dc1 dc1lab 
+{txt} 79{com}.     label define dc2lab 0 "Dir 2 Wrong" 1 "Dir 2 Correct"
+{txt} 80{com}.     label values dc2 dc2lab
+{txt} 81{com}. 
+.     gen woman = 1 if gender == "Man"
+{txt} 82{com}.     replace woman = 0 if gender == "Woman"
+{txt} 83{com}.     drop gender 
+{txt} 84{com}. 
+. 
+. 
+.     // recode the RSES scale
+.     // these have the same rubric: strongly agree 3 to strongly disagree 0
+.     foreach i in 1 3 4 7 10 {c -(}
+{txt} 85{com}.         gen rses_`i'_sc = 0 if rses_`i' == "Strongly Disagree"
+{txt} 86{com}.         replace rses_`i'_sc = 1 if rses_`i' == "Disagree"
+{txt} 87{com}.         replace rses_`i'_sc = 2 if rses_`i' == "Agree"
+{txt} 88{com}.         replace rses_`i'_sc = 3 if rses_`i' == "Strongly Agree"
+{txt} 89{com}. 
+.     {c )-}
+{txt} 90{com}. 
+.     // these have the same rubric: strongly agree 0 to strongly disagree 3
+.     foreach i in 2 5 6 8 9 {c -(}
+{txt} 91{com}.         gen rses_`i'_sc = 0 if rses_`i' == "Strongly Agree"
+{txt} 92{com}.         replace rses_`i'_sc = 1 if rses_`i' == "Agree"
+{txt} 93{com}.         replace rses_`i'_sc = 2 if rses_`i' == "Disagree"
+{txt} 94{com}.         replace rses_`i'_sc = 3 if rses_`i' == "Strongly Disagree"
+{txt} 95{com}.     {c )-}
+{txt} 96{com}. 
+.     gen rses_sc = 0
+{txt} 97{com}.     forvalues i = 1/10 {c -(}
+{txt} 98{com}.         replace rses_sc = rses_sc + rses_`i'_sc
+{txt} 99{com}.     {c )-}
+{txt}100{com}. 
+.     drop rses_? rses_10 rses_?_sc rses_10_sc
+{txt}101{com}.     label var rses_sc "RSES Scale, 0-30"
+{txt}102{com}. 
+.     // list experiment items
+.     forvalues num = 1/13 {c -(}
+{txt}103{com}.         gen agree_le`num' = 1 if list_exp_`num' == "Agree"
+{txt}104{com}.         replace agree_le`num' = 0 if list_exp_`num' == "Disagree"
+{txt}105{com}.     {c )-}
+{txt}106{com}.     label var agree_le1 "Can drive"
+{txt}107{com}.     label var agree_le2 "Vegetarian good"
+{txt}108{com}.     label var agree_le3 "Relax gun control"
+{txt}109{com}.     label var agree_le4 "Have license"
+{txt}110{com}.     label var agree_le5 "COVID overblown"
+{txt}111{com}.     label var agree_le6 "Gave > 1000 USD"
+{txt}112{com}.     label var agree_le7 "Dual Citizen"
+{txt}113{com}.     label var agree_le8 "Has social media"
+{txt}114{com}.     label var agree_le9 "Would vote anti abortion"
+{txt}115{com}.     label var agree_le10 "Should legalize rec marijuana federal"
+{txt}116{com}.     label var agree_le11 "Support BLM"
+{txt}117{com}.     label var agree_le12 "Own iPhone"
+{txt}118{com}.     label var agree_le13 "Parents decide vaccine"
+{txt}119{com}. 
+. 
+.     label data "Pilot `pilotnum', 1 obs per round"
+{txt}120{com}.     save $datadir/clean/pilot_`pilotnum'_init_clean.dta, replace
+{txt}121{com}. {c )-}
+{res}{text}(1,687 vars, 12 obs)
+(1 observation deleted)
+(1 observation deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1 observation deleted)
+(0 observations deleted)
+(1 real change made)
+(4 real changes made)
+(0 real changes made)
+(0 real changes made)
+(4 real changes made)
+(5 real changes made)
+(1 real change made)
+(0 real changes made)
+(2 real changes made)
+
+    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 3}win_bonus {c |}{res}          9           4           0          4          4
+{txt}(3 real changes made)
+{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot4_bonus.csv saved
+(note: j = 1 2 3 4 5 6 7 8 9 10)
+
+Data{col 36}wide{col 43}->{col 48}long
+{hline 77}
+Number of obs.                 {res}       9   {txt}->{res}      90
+{txt}Number of variables            {res}     195   {txt}->{res}      88
+{txt}j variable (10 values)                    ->   {res}round
+{txt}xij variables:
+{res}treat_loop1 treat_loop2 ... treat_loop10  {txt}->   {res}treat_loop
+task_id_loop1 task_id_loop2 ... task_id_loop10{txt}->{res}task_id_loop
+guess_1_a_round1 guess_1_a_round2 ... guess_1_a_round10{txt}->{res}guess_1_a_round
+guess_1_b_round1 guess_1_b_round2 ... guess_1_b_round10{txt}->{res}guess_1_b_round
+actual_red_a_round1 actual_red_a_round2 ... actual_red_a_round10{txt}->{res}actual_red_a_round
+actual_red_b_round1 actual_red_b_round2 ... actual_red_b_round10{txt}->{res}actual_red_b_round
+actual_red_half_a_round1 actual_red_half_a_round2 ... actual_red_half_a_round10{txt}->{res}actual_red_half_a_round
+actual_red_half_b_round1 actual_red_half_b_round2 ... actual_red_half_b_round10{txt}->{res}actual_red_half_b_round
+guess_2_a_round1 guess_2_a_round2 ... guess_2_a_round10{txt}->{res}guess_2_a_round
+guess_2_b_round1 guess_2_b_round2 ... guess_2_b_round10{txt}->{res}guess_2_b_round
+invest_round1 invest_round2 ... invest_round10{txt}->{res}invest_round
+success_round1 success_round2 ... success_round10{txt}->{res}success_round
+{txt}{hline 77}
+{res}{txt}(36 missing values generated)
+(36 real changes made)
+(30 missing values generated)
+(30 real changes made)
+(50 missing values generated)
+(50 real changes made)
+{res}{txt}(36 missing values generated)
+(36 real changes made)
+(50 real changes made)
+(0 real changes made)
+(30 real changes made)
+(1 real change made, 1 to missing)
+{res}{txt}(69 real changes made)
+(68 real changes made)
+(50 missing values generated)
+(50 real changes made)
+(90 missing values generated)
+(20 real changes made)
+(40 real changes made)
+(30 real changes made)
+(90 missing values generated)
+(0 real changes made)
+(40 real changes made)
+(50 real changes made)
+(90 missing values generated)
+(20 real changes made)
+(20 real changes made)
+(50 real changes made)
+(90 missing values generated)
+(0 real changes made)
+(40 real changes made)
+(50 real changes made)
+(90 missing values generated)
+(20 real changes made)
+(40 real changes made)
+(30 real changes made)
+(90 missing values generated)
+(40 real changes made)
+(10 real changes made)
+(40 real changes made)
+(90 missing values generated)
+(10 real changes made)
+(50 real changes made)
+(30 real changes made)
+(90 missing values generated)
+(70 real changes made)
+(0 real changes made)
+(20 real changes made)
+(90 missing values generated)
+(50 real changes made)
+(10 real changes made)
+(30 real changes made)
+(90 missing values generated)
+(20 real changes made)
+(20 real changes made)
+(50 real changes made)
+(90 real changes made)
+(90 real changes made)
+(90 real changes made)
+(90 real changes made)
+(90 real changes made)
+(90 real changes made)
+(90 real changes made)
+(90 real changes made)
+(90 real changes made)
+(90 real changes made)
+(0 real changes made)
+(50 missing values generated)
+(50 real changes made)
+(60 missing values generated)
+(60 real changes made)
+(10 missing values generated)
+(10 real changes made)
+(50 missing values generated)
+(50 real changes made)
+(90 missing values generated)
+(90 real changes made)
+(80 missing values generated)
+(80 real changes made)
+(0 real changes made)
+(60 missing values generated)
+(60 real changes made)
+(10 missing values generated)
+(10 real changes made)
+(50 missing values generated)
+(50 real changes made)
+(60 missing values generated)
+(60 real changes made)
+(30 missing values generated)
+(30 real changes made)
+file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_4_init_clean.dta saved
+{res}{text}(1,604 vars, 72 obs)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(7 observations deleted)
+(1 observation deleted)
+(19 observations deleted)
+(0 observations deleted)
+(3 real changes made)
+(13 real changes made)
+(2 real changes made)
+(1 real change made)
+(8 real changes made)
+(20 real changes made)
+(7 real changes made)
+(1 real change made)
+(10 real changes made)
+
+    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 3}win_bonus {c |}{res}         45           4           0          4          4
+{txt}(3 real changes made)
+{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot5_bonus.csv saved
+(note: j = 1 2 3 4 5 6 7 8 9 10)
+
+Data{col 36}wide{col 43}->{col 48}long
+{hline 77}
+Number of obs.                 {res}      45   {txt}->{res}     450
+{txt}Number of variables            {res}     200   {txt}->{res}      93
+{txt}j variable (10 values)                    ->   {res}round
+{txt}xij variables:
+{res}treat_loop1 treat_loop2 ... treat_loop10  {txt}->   {res}treat_loop
+task_id_loop1 task_id_loop2 ... task_id_loop10{txt}->{res}task_id_loop
+guess_1_a_round1 guess_1_a_round2 ... guess_1_a_round10{txt}->{res}guess_1_a_round
+guess_1_b_round1 guess_1_b_round2 ... guess_1_b_round10{txt}->{res}guess_1_b_round
+actual_red_a_round1 actual_red_a_round2 ... actual_red_a_round10{txt}->{res}actual_red_a_round
+actual_red_b_round1 actual_red_b_round2 ... actual_red_b_round10{txt}->{res}actual_red_b_round
+actual_red_half_a_round1 actual_red_half_a_round2 ... actual_red_half_a_round10{txt}->{res}actual_red_half_a_round
+actual_red_half_b_round1 actual_red_half_b_round2 ... actual_red_half_b_round10{txt}->{res}actual_red_half_b_round
+guess_2_a_round1 guess_2_a_round2 ... guess_2_a_round10{txt}->{res}guess_2_a_round
+guess_2_b_round1 guess_2_b_round2 ... guess_2_b_round10{txt}->{res}guess_2_b_round
+invest_round1 invest_round2 ... invest_round10{txt}->{res}invest_round
+success_round1 success_round2 ... success_round10{txt}->{res}success_round
+{txt}{hline 77}
+{res}{txt}(216 missing values generated)
+(216 real changes made)
+(210 missing values generated)
+(210 real changes made)
+(213 missing values generated)
+(213 real changes made)
+{res}{txt}(216 missing values generated)
+(216 real changes made)
+(202 real changes made)
+(16 real changes made)
+(200 real changes made)
+(9 real changes made, 9 to missing)
+{res}{txt}(294 real changes made)
+(330 real changes made)
+(220 missing values generated)
+(210 real changes made)
+(420 missing values generated)
+(120 real changes made)
+(190 real changes made)
+(110 real changes made)
+(450 missing values generated)
+(60 real changes made)
+(210 real changes made)
+(180 real changes made)
+(430 missing values generated)
+(70 real changes made)
+(220 real changes made)
+(140 real changes made)
+(450 missing values generated)
+(80 real changes made)
+(210 real changes made)
+(160 real changes made)
+(390 missing values generated)
+(90 real changes made)
+(180 real changes made)
+(120 real changes made)
+(420 missing values generated)
+(150 real changes made)
+(130 real changes made)
+(140 real changes made)
+(400 missing values generated)
+(110 real changes made)
+(120 real changes made)
+(170 real changes made)
+(360 missing values generated)
+(170 real changes made)
+(40 real changes made)
+(150 real changes made)
+(300 missing values generated)
+(110 real changes made)
+(100 real changes made)
+(90 real changes made)
+(410 missing values generated)
+(120 real changes made)
+(100 real changes made)
+(190 real changes made)
+(420 real changes made)
+(420 real changes made)
+(450 real changes made)
+(430 real changes made)
+(400 real changes made)
+(360 real changes made)
+(450 real changes made)
+(300 real changes made)
+(410 real changes made)
+(390 real changes made)
+(40 missing values generated)
+(40 real changes made)
+(240 missing values generated)
+(240 real changes made)
+(370 missing values generated)
+(370 real changes made)
+(60 missing values generated)
+(60 real changes made)
+(290 missing values generated)
+(290 real changes made)
+(450 missing values generated)
+(450 real changes made)
+(420 missing values generated)
+(420 real changes made)
+(30 missing values generated)
+(30 real changes made)
+(350 missing values generated)
+(350 real changes made)
+(60 missing values generated)
+(60 real changes made)
+(90 missing values generated)
+(90 real changes made)
+(200 missing values generated)
+(200 real changes made)
+(190 missing values generated)
+(190 real changes made)
+file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_5_init_clean.dta saved
+{res}{text}(1,599 vars, 58 obs)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(1 observation deleted)
+(17 observations deleted)
+(2 observations deleted)
+(2 real changes made)
+(14 real changes made)
+(1 real change made)
+(2 real changes made)
+(6 real changes made)
+(14 real changes made)
+(1 real change made)
+(1 real change made)
+(7 real changes made)
+
+    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 3}win_bonus {c |}{res}         38           4           0          4          4
+{txt}(3 real changes made)
+{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot6_bonus.csv saved
+(note: j = 1 2 3 4 5 6 7 8 9 10)
+
+Data{col 36}wide{col 43}->{col 48}long
+{hline 77}
+Number of obs.                 {res}      38   {txt}->{res}     380
+{txt}Number of variables            {res}     195   {txt}->{res}      88
+{txt}j variable (10 values)                    ->   {res}round
+{txt}xij variables:
+{res}treat_loop1 treat_loop2 ... treat_loop10  {txt}->   {res}treat_loop
+task_id_loop1 task_id_loop2 ... task_id_loop10{txt}->{res}task_id_loop
+guess_1_a_round1 guess_1_a_round2 ... guess_1_a_round10{txt}->{res}guess_1_a_round
+guess_1_b_round1 guess_1_b_round2 ... guess_1_b_round10{txt}->{res}guess_1_b_round
+actual_red_a_round1 actual_red_a_round2 ... actual_red_a_round10{txt}->{res}actual_red_a_round
+actual_red_b_round1 actual_red_b_round2 ... actual_red_b_round10{txt}->{res}actual_red_b_round
+actual_red_half_a_round1 actual_red_half_a_round2 ... actual_red_half_a_round10{txt}->{res}actual_red_half_a_round
+actual_red_half_b_round1 actual_red_half_b_round2 ... actual_red_half_b_round10{txt}->{res}actual_red_half_b_round
+guess_2_a_round1 guess_2_a_round2 ... guess_2_a_round10{txt}->{res}guess_2_a_round
+guess_2_b_round1 guess_2_b_round2 ... guess_2_b_round10{txt}->{res}guess_2_b_round
+invest_round1 invest_round2 ... invest_round10{txt}->{res}invest_round
+success_round1 success_round2 ... success_round10{txt}->{res}success_round
+{txt}{hline 77}
+{res}{txt}(166 missing values generated)
+(166 real changes made)
+(150 missing values generated)
+(150 real changes made)
+(210 missing values generated)
+(210 real changes made)
+{res}{txt}(166 missing values generated)
+(166 real changes made)
+(185 real changes made)
+(15 real changes made)
+(150 real changes made)
+(12 real changes made, 12 to missing)
+{res}{txt}(251 real changes made)
+(276 real changes made)
+(210 missing values generated)
+(210 real changes made)
+(380 missing values generated)
+(90 real changes made)
+(210 real changes made)
+(80 real changes made)
+(380 missing values generated)
+(30 real changes made)
+(220 real changes made)
+(130 real changes made)
+(370 missing values generated)
+(40 real changes made)
+(270 real changes made)
+(60 real changes made)
+(370 missing values generated)
+(30 real changes made)
+(210 real changes made)
+(130 real changes made)
+(360 missing values generated)
+(100 real changes made)
+(200 real changes made)
+(60 real changes made)
+(370 missing values generated)
+(110 real changes made)
+(160 real changes made)
+(100 real changes made)
+(380 missing values generated)
+(100 real changes made)
+(180 real changes made)
+(100 real changes made)
+(360 missing values generated)
+(160 real changes made)
+(120 real changes made)
+(80 real changes made)
+(260 missing values generated)
+(130 real changes made)
+(70 real changes made)
+(60 real changes made)
+(370 missing values generated)
+(50 real changes made)
+(190 real changes made)
+(130 real changes made)
+(380 real changes made)
+(370 real changes made)
+(380 real changes made)
+(370 real changes made)
+(380 real changes made)
+(360 real changes made)
+(370 real changes made)
+(260 real changes made)
+(370 real changes made)
+(360 real changes made)
+(20 missing values generated)
+(20 real changes made)
+(190 missing values generated)
+(190 real changes made)
+(360 missing values generated)
+(360 real changes made)
+(30 missing values generated)
+(30 real changes made)
+(310 missing values generated)
+(310 real changes made)
+(380 missing values generated)
+(380 real changes made)
+(340 missing values generated)
+(340 real changes made)
+(0 real changes made)
+(290 missing values generated)
+(290 real changes made)
+(120 missing values generated)
+(120 real changes made)
+(80 missing values generated)
+(80 real changes made)
+(170 missing values generated)
+(170 real changes made)
+(130 missing values generated)
+(130 real changes made)
+file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_6_init_clean.dta saved
+
+{com}. 
+. 
+. 
+. // append pilot4 and pilot5 and pilot6 data
+. use $datadir/clean/pilot_4_init_clean.dta, clear 
+{txt}(Pilot 4, 1 obs per round)
+
+{com}. append using $datadir/clean/pilot_5_init_clean.dta
+{txt}{p 0 7 2}
+(note: variable
+list_exp_1 was 
+str5, now str8 to accommodate using data's values)
+{p_end}
+{p 0 7 2}
+(note: variable
+race was 
+str25, now str67 to accommodate using data's values)
+{p_end}
+(label dc2lab already defined)
+(label dc1lab already defined)
+(label treatlab already defined)
+
+{com}. append using $datadir/clean/pilot_6_init_clean.dta
+{txt}(label dc2lab already defined)
+(label dc1lab already defined)
+(label treatlab already defined)
+
+{com}. 
+. label data "One obs per round, both portfolios per obs"
+{txt}
+{com}. save $datadir/clean/pilots_2matperob.dta, replace
+{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilots_2matperob.dta saved
+
+{com}. 
+.     //--------------------------------------------------
+.     // split into portfolio A and B and append ------------------------
+.     //--------------------------------------------------
+.     preserve
+{txt}
+{com}. 
+. 
+. 
+.     // drop guesses for portfolio B
+.     drop g?b 
+{txt}
+{com}.     rename g1a prior 
+{res}{txt}
+{com}.     rename g2a post
+{res}{txt}
+{com}.     // indicator for portfolio A
+.     gen left = 1
+{txt}
+{com}.     // a numeric var for invested in the portfolio in the round
+.     gen invest_temp = 1 if invest == "A"
+{txt}(447 missing values generated)
+
+{com}.     replace invest_temp = 0 if invest=="B"
+{txt}(447 real changes made)
+
+{com}.     drop invest 
+{txt}
+{com}.     rename invest_temp invest 
+{res}{txt}
+{com}. 
+.     tempfile a
+{txt}
+{com}.     save `a', replace 
+{txt}(note: file /var/folders/2b/ktlsm5rd4w987t9sp7jylmg80000gn/T//S_01549.000006 not found)
+file /var/folders/2b/ktlsm5rd4w987t9sp7jylmg80000gn/T//S_01549.000006 saved
+
+{com}. 
+.     restore
+{txt}
+{com}. 
+.     drop g?a 
+{txt}
+{com}.     rename g1b prior 
+{res}{txt}
+{com}.     rename g2b post 
+{res}{txt}
+{com}.     gen left = 0 
+{txt}
+{com}. 
+.     gen invest_temp = 1 if invest == "A"
+{txt}(447 missing values generated)
+
+{com}.     replace invest_temp = 0 if invest=="B"
+{txt}(447 real changes made)
+
+{com}.     drop invest 
+{txt}
+{com}.     rename invest_temp invest 
+{res}{txt}
+{com}. 
+.     append using `a'
+{txt}(label treatlab already defined)
+(label dc1lab already defined)
+(label dc2lab already defined)
+
+{com}. 
+. 
+.     // there should now be 2 observations per round
+. 
+.     // get actual red numbers from merging the matrix set records, discard the embedded data.
+.     drop full* 
+{txt}
+{com}. 
+.     // merge on the matrix data
+.     merge m:1 task_id left using $datadir/clean/matdata_set1_clean, nogen
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}               0
+{txt}{col 5}matched{col 30}{res}           1,840{txt}  
+{col 5}{hline 41}
+
+{com}. 
+.     order response_id session_id round task_id left *treat half full prior post invest success 
+{txt}
+{com}. 
+. 
+.     label var left "Left Portfolio (Portfolio A)"
+{txt}
+{com}.     label values left leftlab 
+{txt}
+{com}. 
+.     label var prior "Guess 1"
+{txt}
+{com}.     label var post "Guess 2"
+{txt}
+{com}. 
+.     /* label define investlab 0 "Not Invested" 1 "Invested"
+>     label values invest investlab */
+. 
+.     
+. label data "2 obs per round, 1 portfolio per obs"
+{txt}
+{com}. save $datadir/clean/pilots_init_clean.dta, replace 
+{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilots_init_clean.dta saved
+
+{com}. 
+. 
+. 
+. 
+. set graph on
+{txt}
+{com}. 
+. log close 
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_pilots.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}26 Feb 2024, 11:41:22
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

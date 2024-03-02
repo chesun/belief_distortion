@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_pilot4_5.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}21 Feb 2024, 12:05:38
+ {txt}opened on:  {res}21 Feb 2024, 18:24:37
 {txt}
 {com}. 
 . graph drop _all
@@ -92,29 +92,154 @@
 {txt} 37{com}. 
 .     rename treatment treat_block 
 {txt} 38{com}. 
-.     gen sessionid = `pilotnum'
-{txt} 39{com}. 
-. 
 . 
 .     //------ demographics and embedded data are left here-----------
 . 
 .     /* in this data, no one wrote in gender */
 .     drop gender_6_text
-{txt} 40{com}. 
+{txt} 39{com}. 
 .     // keep only choice and belief data demographics, and experiment setup parameters
 .     keep responseid - recordeddate ///
 >         rses* list_exp* race - gender ///
->         num_rounds invest_score treat* task_id* guess* actual* quiz* invest success sessionid
-{txt} 41{com}. 
+>         num_rounds invest_score treat* task_id* guess* actual* quiz* invest success
+{txt} 40{com}. 
 .     drop quiz_failed
-{txt} 42{com}.     // get actual red numbers from merging the matrix set records, discard the embedded data.
+{txt} 41{com}.     // get actual red numbers from merging the matrix set records, discard the embedded data.
 .     drop actual_red*
-{txt} 43{com}.     
+{txt} 42{com}.     
 . 
-.     order responseid round guess* treat* task* invest success sessionid
-{txt} 44{com}. 
+.     order responseid round guess* treat* task* invest success
+{txt} 43{com}. 
+.     //-------------------------------------------------
+.     // create numeric dummies for treatment variables
+.     //--------------------------------------------------
+.     gen r_treat = 1 if treat_loop == "baseline"
+{txt} 44{com}.     replace r_treat = 0 if treat_loop == "control"
+{txt} 45{com}.     label var r_treat "treatment round"
+{txt} 46{com}. 
+.     gen b_treat = 1 if treat_block == "baseline"
+{txt} 47{com}.     replace b_treat = 0 if treat_block == "control"
+{txt} 48{com}.     label var b_treat "treatment block"
+{txt} 49{com}. 
+.     // make value labels for the treatment variables 
+.     label define treatlab 0 "Control" 1 "Treatment"
+{txt} 50{com}. 
+.     label values r_treat treatlab
+{txt} 51{com}.     label values b_treat treatlab
+{txt} 52{com}. 
+.     // drop the string vars
+.     drop treat_block treat_loop 
+{txt} 53{com}. 
+.     rename task_id_loop task_id
+{txt} 54{com}. 
+.     //-----------------------------------------------------------------------------
+.     // exclude subjects in the treatment who did not invest in the right direction according to prior
+.     //-----------------------------------------------------------------------------
+.     gen diff_1 = guess_1_a - guess_1_b
+{txt} 55{com}.     gen dir_correct_round = 0
+{txt} 56{com}.     replace dir_correct_round = 1 if (invest == "A" & diff_1 > 0 & r_treat==1) | (invest=="B" & diff_1 < 0 & r_treat==1) | (diff_1 == 0 & r_treat==1)
+{txt} 57{com}.     replace dir_correct_round = 1 if r_treat == 0
+{txt} 58{com}.     bysort responseid: egen dir_correct_subject = min(dir_correct_round)
+{txt} 59{com}. 
+. 
+.     //--------------------------------------------------
+.     // split into portfolio A and B and append
+.     //--------------------------------------------------
+.     preserve
+{txt} 60{com}. 
+.     // drop guesses for portfolio B
+.     drop guess*b 
+{txt} 61{com}.     rename guess_1_a prior 
+{txt} 62{com}.     rename guess_2_a post
+{txt} 63{com}.     // indicator for portfolio A
+.     gen left = 1
+{txt} 64{com}.     // a numeric var for invested in the portfolio in the round
+.     gen invest_temp = 1 if invest == "A"
+{txt} 65{com}.     replace invest_temp = 0 if invest=="B"
+{txt} 66{com}.     drop invest 
+{txt} 67{com}.     rename invest_temp invest 
+{txt} 68{com}. 
+.     tempfile `pilotnum'a
+{txt} 69{com}.     save ``pilotnum'a', replace 
+{txt} 70{com}. 
+.     restore
+{txt} 71{com}. 
+.     drop guess*a 
+{txt} 72{com}.     rename guess_1_b prior 
+{txt} 73{com}.     rename guess_2_b post 
+{txt} 74{com}.     gen left = 0 
+{txt} 75{com}. 
+.     gen invest_temp = 1 if invest == "A"
+{txt} 76{com}.     replace invest_temp = 0 if invest=="B"
+{txt} 77{com}.     drop invest 
+{txt} 78{com}.     rename invest_temp invest 
+{txt} 79{com}. 
+.     append using ``pilotnum'a'
+{txt} 80{com}. 
+. 
+.     // there should now be 2 observations per round
+. 
+.     gen session_id = `pilotnum'
+{txt} 81{com}.     rename responseid response_id
+{txt} 82{com}. 
+.     // merge on the matrix data
+.     merge m:1 task_id left using $datadir/clean/matdata_set1_clean, nogen
+{txt} 83{com}. 
+.     order response_id session_id round task_id left *treat half full prior post invest success 
+{txt} 84{com}. 
+. 
+.     label var left "Left Portfolio (Portfolio A)"
+{txt} 85{com}.     label values left leftlab 
+{txt} 86{com}. 
+.     label var prior "Guess 1"
+{txt} 87{com}.     label var post "Guess 2"
+{txt} 88{com}. 
+.     /* label define investlab 0 "Not Invested" 1 "Invested"
+>     label values invest investlab */
+. 
+.     gen woman = 1 if gender == "Man"
+{txt} 89{com}.     replace woman = 0 if gender == "Woman"
+{txt} 90{com}.     drop gender 
+{txt} 91{com}. 
+.     /* sort response_id task_id left
+>     bysort response_id task_id: gen alt_post = post[2] if _n==1
+>     bysort response_id task_id: replace alt_post = post[1] if _n==2
+>     bysort response_id task_id: gen alt_full = full[2] if _n==1
+>     bysort response_id task_id: replace alt_full = full[1] if _n==2
+> 
+>     bysort response_id task_id: gen alt_prior = prior[2] if _n==1
+>     bysort response_id task_id: replace alt_prior = prior[1] if _n==2 */
+. 
+. 
+.     gen post_error = post - full 
+{txt} 92{com}. 
+.     // recode the RSES scale
+.     // these have the same rubric: strongly agree 3 to strongly disagree 0
+.     foreach i in 1 3 4 7 10 {c -(}
+{txt} 93{com}.         gen rses_`i'_sc = 0 if rses_`i' == "Strongly Disagree"
+{txt} 94{com}.         replace rses_`i'_sc = 1 if rses_`i' == "Disagree"
+{txt} 95{com}.         replace rses_`i'_sc = 2 if rses_`i' == "Agree"
+{txt} 96{com}.         replace rses_`i'_sc = 3 if rses_`i' == "Strongly Agree"
+{txt} 97{com}. 
+.     {c )-}
+{txt} 98{com}. 
+.     // these have the same rubric: strongly agree 0 to strongly disagree 3
+.     foreach i in 2 5 6 8 9 {c -(}
+{txt} 99{com}.         gen rses_`i'_sc = 0 if rses_`i' == "Strongly Agree"
+{txt}100{com}.         replace rses_`i'_sc = 1 if rses_`i' == "Agree"
+{txt}101{com}.         replace rses_`i'_sc = 2 if rses_`i' == "Disagree"
+{txt}102{com}.         replace rses_`i'_sc = 3 if rses_`i' == "Strongly Disagree"
+{txt}103{com}.     {c )-}
+{txt}104{com}. 
+.     gen rses_sc = 0
+{txt}105{com}.     forvalues i = 1/10 {c -(}
+{txt}106{com}.         replace rses_sc = rses_sc + rses_`i'_sc
+{txt}107{com}.     {c )-}
+{txt}108{com}. 
+.     drop rses_? rses_?_sc
+{txt}109{com}. 
 .     save $datadir/clean/pilot_`pilotnum'_init_clean.dta, replace
-{txt} 45{com}. {c )-}
+{txt}110{com}. {c )-}
 {res}{text}(1,687 vars, 12 obs)
 (1 observation deleted)
 (1 observation deleted)
@@ -157,7 +282,78 @@ guess_2_b_round1 guess_2_b_round2 ... guess_2_b_round10{txt}->{res}guess_2_b_rou
 invest_round1 invest_round2 ... invest_round10{txt}->{res}invest_round
 success_round1 success_round2 ... success_round10{txt}->{res}success_round
 {txt}{hline 77}
-{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_4_init_clean.dta saved
+{res}{txt}(36 missing values generated)
+(36 real changes made)
+(30 missing values generated)
+(30 real changes made)
+{res}{txt}(50 real changes made)
+(36 real changes made)
+{res}{txt}(40 missing values generated)
+(40 real changes made)
+{res}{txt}(note: file /var/folders/2b/ktlsm5rd4w987t9sp7jylmg80000gn/T//S_80665.000005 not found)
+file /var/folders/2b/ktlsm5rd4w987t9sp7jylmg80000gn/T//S_80665.000005 saved
+{res}{txt}(40 missing values generated)
+(40 real changes made)
+{res}{txt}(label treatlab already defined)
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}               0
+{txt}{col 5}matched{col 30}{res}             180{txt}  
+{col 5}{hline 41}
+(100 missing values generated)
+(100 real changes made)
+(180 missing values generated)
+(40 real changes made)
+(80 real changes made)
+(60 real changes made)
+(180 missing values generated)
+(0 real changes made)
+(80 real changes made)
+(100 real changes made)
+(180 missing values generated)
+(40 real changes made)
+(40 real changes made)
+(100 real changes made)
+(180 missing values generated)
+(0 real changes made)
+(80 real changes made)
+(100 real changes made)
+(180 missing values generated)
+(40 real changes made)
+(80 real changes made)
+(60 real changes made)
+(180 missing values generated)
+(80 real changes made)
+(20 real changes made)
+(80 real changes made)
+(180 missing values generated)
+(20 real changes made)
+(100 real changes made)
+(60 real changes made)
+(180 missing values generated)
+(140 real changes made)
+(0 real changes made)
+(40 real changes made)
+(180 missing values generated)
+(100 real changes made)
+(20 real changes made)
+(60 real changes made)
+(180 missing values generated)
+(40 real changes made)
+(40 real changes made)
+(100 real changes made)
+(180 real changes made)
+(180 real changes made)
+(180 real changes made)
+(180 real changes made)
+(180 real changes made)
+(180 real changes made)
+(180 real changes made)
+(180 real changes made)
+(180 real changes made)
+(180 real changes made)
+file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_4_init_clean.dta saved
 {res}{text}(1,604 vars, 72 obs)
 (0 observations deleted)
 (0 observations deleted)
@@ -200,7 +396,78 @@ guess_2_b_round1 guess_2_b_round2 ... guess_2_b_round10{txt}->{res}guess_2_b_rou
 invest_round1 invest_round2 ... invest_round10{txt}->{res}invest_round
 success_round1 success_round2 ... success_round10{txt}->{res}success_round
 {txt}{hline 77}
-{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_5_init_clean.dta saved
+{res}{txt}(216 missing values generated)
+(216 real changes made)
+(210 missing values generated)
+(210 real changes made)
+{res}{txt}(218 real changes made)
+(216 real changes made)
+{res}{txt}(237 missing values generated)
+(237 real changes made)
+{res}{txt}(note: file /var/folders/2b/ktlsm5rd4w987t9sp7jylmg80000gn/T//S_80665.000008 not found)
+file /var/folders/2b/ktlsm5rd4w987t9sp7jylmg80000gn/T//S_80665.000008 saved
+{res}{txt}(237 missing values generated)
+(237 real changes made)
+{res}{txt}(label treatlab already defined)
+{res}
+{txt}{col 5}Result{col 38}# of obs.
+{col 5}{hline 41}
+{col 5}not matched{col 30}{res}               0
+{txt}{col 5}matched{col 30}{res}             900{txt}  
+{col 5}{hline 41}
+(440 missing values generated)
+(420 real changes made)
+(840 missing values generated)
+(240 real changes made)
+(380 real changes made)
+(220 real changes made)
+(900 missing values generated)
+(120 real changes made)
+(420 real changes made)
+(360 real changes made)
+(860 missing values generated)
+(140 real changes made)
+(440 real changes made)
+(280 real changes made)
+(900 missing values generated)
+(160 real changes made)
+(420 real changes made)
+(320 real changes made)
+(780 missing values generated)
+(180 real changes made)
+(360 real changes made)
+(240 real changes made)
+(840 missing values generated)
+(300 real changes made)
+(260 real changes made)
+(280 real changes made)
+(800 missing values generated)
+(220 real changes made)
+(240 real changes made)
+(340 real changes made)
+(720 missing values generated)
+(340 real changes made)
+(80 real changes made)
+(300 real changes made)
+(600 missing values generated)
+(220 real changes made)
+(200 real changes made)
+(180 real changes made)
+(820 missing values generated)
+(240 real changes made)
+(200 real changes made)
+(380 real changes made)
+(840 real changes made)
+(840 real changes made)
+(900 real changes made)
+(860 real changes made)
+(800 real changes made)
+(720 real changes made)
+(900 real changes made)
+(600 real changes made)
+(820 real changes made)
+(780 real changes made)
+file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_5_init_clean.dta saved
 
 {com}. 
 . 
@@ -210,21 +477,6 @@ success_round1 success_round2 ... success_round10{txt}->{res}success_round
 {txt}
 {com}. append using $datadir/clean/pilot_5_init_clean.dta
 {txt}{p 0 7 2}
-(note: variable
-rses_1 was 
-str14, now str17 to accommodate using data's values)
-{p_end}
-{p 0 7 2}
-(note: variable
-rses_4 was 
-str14, now str17 to accommodate using data's values)
-{p_end}
-{p 0 7 2}
-(note: variable
-rses_7 was 
-str14, now str17 to accommodate using data's values)
-{p_end}
-{p 0 7 2}
 (note: variable
 rses_10 was 
 str14, now str17 to accommodate using data's values)
@@ -239,72 +491,11 @@ str5, now str8 to accommodate using data's values)
 race was 
 str25, now str67 to accommodate using data's values)
 {p_end}
-{p 0 7 2}
-(note: variable
-gender was 
-str5, now str10 to accommodate using data's values)
-{p_end}
+(label leftlab already defined)
+(label treatlab already defined)
 
 {com}. 
-. /* // create aligned version of the guess 2 variable: so that A and B portfolios are the same between treatments
-> // in the survey they are swapped between treatments
-> foreach letter in a b {c -(}
->     gen guess_2_`letter'_align = guess_2_`letter' if treat_loop == "baseline"
->     gen guess_1_`letter'_align = guess_1_`letter' if treat_loop == "baseline"
-> 
->     gen actual_red_`letter'_align = actual_red_`letter' if treat_loop == "baseline"
-> {c )-}
-> 
-> replace guess_2_a_align = guess_2_b if treat_loop == "control"
-> replace guess_2_b_align = guess_2_a if treat_loop == "control"
-> 
-> replace guess_1_a_align = guess_1_b if treat_loop == "control"
-> replace guess_1_b_align = guess_1_a if treat_loop == "control"
-> 
-> replace actual_red_a_align = actual_red_b if treat_loop == "control"
-> replace actual_red_b_align = actual_red_a if treat_loop == "control"
-> 
-> // aligned investment (swap investment between A and B for control)
-> 
-> 
-> // create numeric dummies for investment and treatment variables
-> gen invest_a = 0 if invest == "B"
-> replace invest_a = 1 if invest == "A"
-> label var invest_a "Invest in A"
-> 
-> gen r_treat = 1 if treat_loop == "baseline"
-> replace r_treat = 0 if treat_loop == "control"
-> label var r_treat "treatment round"
-> 
-> gen b_treat = 1 if treat_block == "baseline"
-> replace b_treat = 0 if treat_block == "control"
-> label var b_treat "treatment block"
-> 
-> // make value labels for the treatment variables 
-> label define treatlab 0 "Control" 1 "Treatment"
-> 
-> label values r_treat treatlab
-> label values b_treat treatlab
-> 
-> // rename the aligned variables
-> rename guess_2_?_align post_?
-> rename guess_1_?_align prior_?
-> 
-> rename actual_red_?_align true_?
-> 
-> gen diff_1 = prior_a - prior_b
-> label var diff_1 "Guess 1 Diff (A-B)"
-> gen diff_2 = post_a - post_b
-> label var diff_2 "Guess 2 Diff (A-B)"
-> 
->  */
 . 
-. 
-. 
-. // append guesses for portfolio A and B
-. preserve 
-{txt}
-{com}. 
 . save $datadir/clean/pilot_4_5_append_init_clean.dta, replace 
 {txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_4_5_append_init_clean.dta saved
 
@@ -318,7 +509,7 @@ str5, now str10 to accommodate using data's values)
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/clean_pilot4_5.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}21 Feb 2024, 12:05:38
+ {txt}closed on:  {res}21 Feb 2024, 18:24:37
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}
