@@ -60,6 +60,10 @@ label define treatlab 0 "Control" 1 "Treat"
 label values treat treatlab
 
 
+// calculate bonus
+gen success = 0
+replace success = 1 if investa == trueahigher
+
 
 
 
