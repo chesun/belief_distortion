@@ -11,6 +11,10 @@ else if c(os) == "MacOSX" & c(username) == "christinasun" {
     cd "/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis"
     do do_files/settings.do
 }
+else if c(hostname) == "Christina-PC" & c(username) == "sunch" {
+    cd "D:\Programs\Dropbox\github_repos\belief_distortion\analysis"
+    do do_files/settings.do
+}
 else {
     di "hostname: " c(hostname)
     di "username: " c(username)

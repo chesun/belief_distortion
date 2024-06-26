@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/explore_pilot3.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}12 Feb 2024, 11:52:57
+ {txt}opened on:  {res}24 Jun 2024, 13:19:38
 {txt}
 {com}. 
 . graph drop _all
@@ -117,7 +117,7 @@
 (7 real changes made)
 
 {com}. 
-. sort invest_score
+. gsort -invest_score
 {txt}
 {com}. gen earned_game_bonus = 0
 {txt}
@@ -136,22 +136,104 @@
 {com}. keep responseid prolific_pid earned_game_bonus earned_belief_bonus earned_invest_bonus
 {txt}
 {com}. export delimited using $datadir/clean/pilot3_bonus.csv, replace 
-{res}{txt}(note: file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot3_bonus.csv not found)
-{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot3_bonus.csv saved
+{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot3_bonus.csv saved
 
 {com}. restore
 {txt}
 {com}. 
+. // keep only the belief, choice, and actual red variables
+. drop q144 - errors_quiz_q9
+{txt}
+{com}. 
+. // reshape into long format for analysis
+. reshape long treat_loop task_id_loop ///
+>     guess_1_a_round guess_1_b_round ///
+>     actual_red_a_round actual_red_b_round ///
+>     guess_2_a_round guess_2_b_round ///
+>     invest_round success_round, i(responseid) j(round)
+{txt}(note: j = 1 2 3 4 5 6 7 8 9 10 11 12)
+
+Data{col 36}wide{col 43}->{col 48}long
+{hline 77}
+Number of obs.                 {res}       9   {txt}->{res}     108
+{txt}Number of variables            {res}     126   {txt}->{res}      17
+{txt}j variable (12 values)                    ->   {res}round
+{txt}xij variables:
+{res}treat_loop1 treat_loop2 ... treat_loop12  {txt}->   {res}treat_loop
+task_id_loop1 task_id_loop2 ... task_id_loop12{txt}->{res}task_id_loop
+guess_1_a_round1 guess_1_a_round2 ... guess_1_a_round12{txt}->{res}guess_1_a_round
+guess_1_b_round1 guess_1_b_round2 ... guess_1_b_round12{txt}->{res}guess_1_b_round
+actual_red_a_round1 actual_red_a_round2 ... actual_red_a_round12{txt}->{res}actual_red_a_round
+actual_red_b_round1 actual_red_b_round2 ... actual_red_b_round12{txt}->{res}actual_red_b_round
+guess_2_a_round1 guess_2_a_round2 ... guess_2_a_round12{txt}->{res}guess_2_a_round
+guess_2_b_round1 guess_2_b_round2 ... guess_2_b_round12{txt}->{res}guess_2_b_round
+invest_round1 invest_round2 ... invest_round12{txt}->{res}invest_round
+success_round1 success_round2 ... success_round12{txt}->{res}success_round
+{txt}{hline 77}
+
+{com}. 
+. rename guess_1_a_round guess_1_a 
+{res}{txt}
+{com}. rename guess_1_b_round guess_1_b
+{res}{txt}
+{com}. rename actual_red_a_round actual_red_a
+{res}{txt}
+{com}. rename actual_red_b_round actual_red_b
+{res}{txt}
+{com}. rename guess_2_a_round guess_2_a 
+{res}{txt}
+{com}. rename guess_2_b_round guess_2_b
+{res}{txt}
+{com}. rename invest_round invest
+{res}{txt}
+{com}. rename success_round success 
+{res}{txt}
+{com}. 
+. rename treatment treat_block 
+{res}{txt}
+{com}. 
+. gen session = "pilot3"
+{txt}
+{com}. 
+. 
+. twoway (scatter guess_1_a actual_red_a if treat_loop=="baseline", yscale(range(0 100)) xscale(range(0 100))) (scatter guess_1_a actual_red_a if treat_loop=="control", yscale(range(0 100)) xscale(range(0 100)) ), legend(label(1 "Treatment") label(2 "Control")) title("Portfolio A Guess 1")
+{res}{txt}
+{com}. twoway (scatter guess_1_b actual_red_b if treat_loop=="baseline", yscale(range(0 100)) xscale(range(0 100))) (scatter guess_1_b actual_red_b if treat_loop=="control", yscale(range(0 100)) xscale(range(0 100)) ), legend(label(1 "Treatment") label(2 "Control")) title("Portfolio B Guess 1")
+{res}{txt}
+{com}. 
+. 
+. ranksum guess_1_b, by(treat_loop)
+
+{txt}Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+
+  treat_loop {c |}      obs    rank sum    expected
+{hline 13}{c +}{hline 33}
+    baseline {c |}{res}{col 17}     66{col 26}      3384{col 38}      3597
+     {txt}control {c |}{res}{col 17}     42{col 26}      2502{col 38}      2289
+{txt}{hline 13}{c +}{hline 33}
+    combined {c |}{res}{col 17}    108{col 26}      5886{col 38}      5886
+
+{txt}unadjusted variance{col 22}{res}  25179.00
+{txt}adjustment for ties{col 22}{res}   -148.96
+{txt}{col 22}{hline 10}
+adjusted variance{col 22}{res}  25030.04
+
+{txt}Ho: gues~1_b(treat_~p==baseline) = gues~1_b(treat_~p==control)
+{col 14}z = {res} -1.346
+{txt}{col 5}Prob > |z| = {res}  0.1782
+{txt}
+{com}. 
+. 
+. 
 . save $datadir/clean/pilot_3_clean.dta, replace
-{txt}(note: file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_3_clean.dta not found)
-file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_3_clean.dta saved
+{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_3_clean.dta saved
 
 {com}. 
 . log close 
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/explore_pilot3.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}12 Feb 2024, 11:52:57
+ {txt}closed on:  {res}24 Jun 2024, 13:19:39
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}
