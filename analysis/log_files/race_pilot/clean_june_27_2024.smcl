@@ -1,0 +1,126 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}D:\Programs\Dropbox\github_repos\belief_distortion\analysis/log_files/race_pilot/clean_june_27_2024.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}27 Jun 2024, 16:20:21
+{txt}
+{com}. 
+. graph drop _all
+{txt}
+{com}. set more off
+{txt}
+{com}. set varabbrev off
+{txt}
+{com}. /* set graphics off */
+. set scheme s1color
+{txt}
+{com}. set seed 1984
+{txt}
+{com}. 
+. 
+. import delimited $racedatadir/raw/pilot_june_27_2024.csv, varnames(1) clear
+{res}{text}(230 vars, 183 obs)
+
+{com}. 
+. 
+. //--------------------------------------------------------------------
+. // initial cleaning
+. //--------------------------------------------------------------------
+. 
+. //------------create session and subject ID -------------------
+. gen sessionid = 2
+{txt}
+{com}. gen subjectid = _n 
+{txt}
+{com}. 
+. //-------------------drop observations------------------
+. drop if mi(prolific_pid)
+{txt}(0 observations deleted)
+
+{com}. 
+. // drop obs who declined consent
+. drop if q4 == 0
+{txt}(0 observations deleted)
+
+{com}. // drop likely duplicates
+. keep if q_relevantidduplicatescore < 75
+{txt}(5 observations deleted)
+
+{com}. // drop obs that are likely bots
+. drop if q_relevantidfraudscore >= 30
+{txt}(6 observations deleted)
+
+{com}. drop if q_recaptchascore <= 0.5
+{txt}(0 observations deleted)
+
+{com}. // drop obs who failed quiz
+. drop if quiz_failed == 1
+{txt}(31 observations deleted)
+
+{com}. // keep if finished
+. keep if finished == 1
+{txt}(23 observations deleted)
+
+{com}. // screen out obs who did not go through the prior stage
+. drop if mi(asian_prior_1)
+{txt}(15 observations deleted)
+
+{com}. 
+. //--------------------------------------------------------------------
+. // combine belief variables between treatments
+. //--------------------------------------------------------------------
+. // v137 v138 etc are in the hiring + belief treatment 
+. forvalues loop = 1/8 {c -(}
+{txt}  2{com}.     replace lm`loop'_belief_time_pagesubmit = v`= 135 + (`loop' - 1)*11' if belief_only == 0
+{txt}  3{com}.     replace lm`loop'_belief_1 = v`=137 + (`loop' - 1)*11' if belief_only == 0
+{txt}  4{com}.     replace lm`loop'_belief_2 = v`=138 + (`loop' - 1)*11' if belief_only == 0
+{txt}  5{com}. 
+.     rename lm`loop'_belief_time_pagesubmit lm`loop'_belief_time
+{txt}  6{com}. 
+.     rename lm`loop'_hire_time_pagesubmit lm`loop'_hire_time
+{txt}  7{com}. 
+.     // drop first click, last click, and click count, and vars in the hiring treatment
+.     drop lm`loop'*click lm`loop'*clickcount
+{txt}  8{com}.     forvalues num = 133/138 {c -(}
+{txt}  9{com}.          drop v`=`num' + (`loop' - 1)*11'
+{txt} 10{com}.     {c )-}
+{txt} 11{com}. {c )-}
+{txt}(56 real changes made)
+(56 real changes made)
+(56 real changes made)
+{res}{txt}(56 real changes made)
+(56 real changes made)
+(56 real changes made)
+{res}{txt}(56 real changes made)
+(56 real changes made)
+(56 real changes made)
+{res}{txt}(56 real changes made)
+(56 real changes made)
+(56 real changes made)
+{res}{txt}(56 real changes made)
+(56 real changes made)
+(56 real changes made)
+{res}{txt}(56 real changes made)
+(56 real changes made)
+(56 real changes made)
+{res}{txt}(56 real changes made)
+(56 real changes made)
+(56 real changes made)
+{res}{txt}(56 real changes made)
+(56 real changes made)
+(56 real changes made)
+{res}{txt}
+{com}. 
+. 
+. 
+. 
+. 
+. log close 
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}D:\Programs\Dropbox\github_repos\belief_distortion\analysis/log_files/race_pilot/clean_june_27_2024.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}27 Jun 2024, 16:20:21
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

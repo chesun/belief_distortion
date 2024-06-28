@@ -1,5 +1,4 @@
-/* clean version to of the design, only one round, between subject
-Pilot 7 */
+/* race frame vs neutral frame. hiring and belief */
 
 /* To run this do fiile:
 do $projdir/do_files/race_pilot/clean_mar_24_2024.do
@@ -63,7 +62,6 @@ drop if quiz_failed == 1
 // keep if finished
 keep if finished == "TRUE"
 
-drop if quiz_failed == 1
 
 
 //--------------------------------------------------------------------
