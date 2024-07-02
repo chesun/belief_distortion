@@ -6,4 +6,462 @@
  {txt}opened on:  {res}24 Jun 2024, 13:20:17
 
 {com}. 
+. import delimited $racedatadir\raw\pilot_mar_24_2024.csv, varnames(1) clear
+{res}{err}file \raw\pilot_mar_24_2024.csv not found
+{txt}{search r(601), local:r(601);}
+
+{com}. 
+.     do do_files/settings.do
+{txt}
+{com}. if c(hostname) == "scribe" {c -(}
+.     global datadir "/home/research/ca_ed_lab/users/chesun/personal/jmp/data"
+.     global projdir "/home/research/ca_ed_lab/users/chesun/personal/jmp"
+.     cd $projdir 
+.     di "Scribe settings set correctly"
 . 
+. {c )-}
+{txt}
+{com}. else if c(os) == "MacOSX" & c(username) == "christinasun" {c -(}
+.     global datadir "/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local"
+.     global projdir "/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis"
+.     global racedatadir "/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion_discrimination/data_local"
+.     cd $projdir
+{res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis
+{com}.     di "Personal Macbook settings set correctly"
+{res}Personal Macbook settings set correctly
+{com}. 
+. {c )-}
+{txt}
+{com}. else if c(hostname) == "Christina-PC" & c(username) == "sunch" {c -(}
+.     global datadir "D:\Programs\Dropbox\Davis\Research_Projects\belief_distortion\data_local"
+.     global racedatadir "D:\Programs\Dropbox\Davis\Research_Projects\belief_distortion_discrimination\data_local"
+.     global projdir "D:\Programs\Dropbox\github_repos\belief_distortion\analysis"
+.     cd $projdir
+.     di "Personal desktop PC settings set correctly"
+. {c )-}
+{txt}
+{com}. else {c -(}
+.     di "hostname: " c(hostname)
+.     di "username: " c(username)
+.     di "Settings for this host and user not found!"
+. {c )-}
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}.     do do_files/settings.do
+{txt}
+{com}. if c(hostname) == "scribe" {c -(}
+.     global datadir "/home/research/ca_ed_lab/users/chesun/personal/jmp/data"
+.     global projdir "/home/research/ca_ed_lab/users/chesun/personal/jmp"
+.     cd $projdir 
+.     di "Scribe settings set correctly"
+. 
+. {c )-}
+{txt}
+{com}. else if c(os) == "MacOSX" & c(username) == "christinasun" {c -(}
+.     global datadir "/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local"
+.     global projdir "/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis"
+.     global racedatadir "/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion_discrimination/data_local"
+.     cd $projdir
+{res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis
+{com}.     di "Personal Macbook settings set correctly"
+{res}Personal Macbook settings set correctly
+{com}. 
+. {c )-}
+{txt}
+{com}. else if c(hostname) == "Christina-PC" & c(username) == "sunch" {c -(}
+.     global datadir "D:\Programs\Dropbox\Davis\Research_Projects\belief_distortion\data_local"
+.     global racedatadir "D:\Programs\Dropbox\Davis\Research_Projects\belief_distortion_discrimination\data_local"
+.     global projdir "D:\Programs\Dropbox\github_repos\belief_distortion\analysis"
+.     cd $projdir
+.     di "Personal desktop PC settings set correctly"
+. {c )-}
+{txt}
+{com}. else {c -(}
+.     di "hostname: " c(hostname)
+.     di "username: " c(username)
+.     di "Settings for this host and user not found!"
+. {c )-}
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. import delimited $racedatadir\raw\pilot_mar_24_2024.csv, varnames(1) clear
+{res}{err}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion_discrimination/data_local\raw\pilot_mar_24_2024.csv not found
+{txt}{search r(601), local:r(601);}
+
+{com}.     do do_files/settings.do
+{txt}
+{com}. if c(hostname) == "scribe" {c -(}
+.     global datadir "/home/research/ca_ed_lab/users/chesun/personal/jmp/data"
+.     global projdir "/home/research/ca_ed_lab/users/chesun/personal/jmp"
+.     cd $projdir 
+.     di "Scribe settings set correctly"
+. 
+. {c )-}
+{txt}
+{com}. else if c(os) == "MacOSX" & c(username) == "christinasun" {c -(}
+.     global datadir "/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local"
+.     global projdir "/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis"
+.     global racedatadir "/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion_discrimination/data_local"
+.     cd $projdir
+{res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis
+{com}.     di "Personal Macbook settings set correctly"
+{res}Personal Macbook settings set correctly
+{com}. 
+. {c )-}
+{txt}
+{com}. else if c(hostname) == "Christina-PC" & c(username) == "sunch" {c -(}
+.     global datadir "D:\Programs\Dropbox\Davis\Research_Projects\belief_distortion\data_local"
+.     global racedatadir "D:\Programs\Dropbox\Davis\Research_Projects\belief_distortion_discrimination\data_local"
+.     global projdir "D:\Programs\Dropbox\github_repos\belief_distortion\analysis"
+.     cd $projdir
+.     di "Personal desktop PC settings set correctly"
+. {c )-}
+{txt}
+{com}. else {c -(}
+.     di "hostname: " c(hostname)
+.     di "username: " c(username)
+.     di "Settings for this host and user not found!"
+. {c )-}
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. import delimited $racedatadir\raw\pilot_mar_24_2024.csv, varnames(1) clear
+{res}{err}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion_discrimination/data_local\raw\pilot_mar_24_2024.csv not found
+{txt}{search r(601), local:r(601);}
+
+{com}. macro list
+{txt}{p 0 16}
+racedatadir:{space 4}{res}{res}/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion_discrimination/data_local
+{p_end}
+{txt}{p 0 16}
+projdir:{space 8}{res}{res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis
+{p_end}
+{txt}{p 0 16}
+datadir:{space 8}{res}{res}/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local
+{p_end}
+{txt}{p 0 16}
+S_FNDATE:{space 7}{res}{res}24 Jun 2024 13:19
+{p_end}
+{txt}{p 0 16}
+S_FN:{space 11}{res}{res}/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_3_clean.dta
+{p_end}
+{txt}{p 0 16}
+S_7:{space 12}{res}{res}42
+{p_end}
+{txt}{p 0 16}
+S_6:{space 12}{res}{res}66
+{p_end}
+{txt}{p 0 16}
+S_5:{space 12}{res}{res}25030.03738317757
+{p_end}
+{txt}{p 0 16}
+S_4:{space 12}{res}{res}-1.346321726396615
+{p_end}
+{txt}{p 0 16}
+S_3:{space 12}{res}{res}3597
+{p_end}
+{txt}{p 0 16}
+S_2:{space 12}{res}{res}3384
+{p_end}
+{txt}{p 0 16}
+S_1:{space 12}{res}{res}1
+{p_end}
+{txt}{p 0 16}
+T_gm_fix_span:{space 2}{res}{res}0
+{p_end}
+{txt}{p 0 16}
+ReS_Call:{space 7}{res}{res}version 14.2:
+{p_end}
+{txt}{p 0 16}
+S_level:{space 8}{res}{res}95
+{p_end}
+{txt}{p 0 16}
+F1:{space 13}{res}{res}help advice;
+{p_end}
+{txt}{p 0 16}
+F2:{space 13}{res}{res}describe;
+{p_end}
+{txt}{p 0 16}
+F7:{space 13}{res}{res}save 
+{p_end}
+{txt}{p 0 16}
+F8:{space 13}{res}{res}use 
+{p_end}
+{txt}{p 0 16}
+S_ADO:{space 10}{res}{res}BASE;SITE;.;PERSONAL;PLUS;OLDPLACE
+{p_end}
+{txt}{p 0 16}
+S_StataMP:{space 6}{res}{res}MP
+{p_end}
+{txt}{p 0 16}
+S_StataSE:{space 6}{res}{res}SE
+{p_end}
+{txt}{p 0 16}
+S_FLAVOR:{space 7}{res}{res}Intercooled
+{p_end}
+{txt}{p 0 16}
+S_OS:{space 11}{res}{res}MacOSX
+{p_end}
+{txt}{p 0 16}
+S_OSDTL:{space 8}{res}{res}10.16.0
+{p_end}
+{txt}{p 0 16}
+S_MACH:{space 9}{res}{res}Macintosh (Intel 64-bit)
+{p_end}
+
+{com}. 
+. 
+. set more off
+
+. pwd
+{res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis
+
+{com}. import delimited $racedatadir/raw/pilot_mar_24_2024.csv, varnames(1) clear
+{res}{text}(163 vars, 150 obs)
+
+{com}. 
+. browse
+
+. import delimited $racedatadir/raw/clean_june_27_2024.csv, varnames(1) clear
+{res}{err}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion_discrimination/data_local/raw/clean_june_27_2024.csv not found
+{txt}{search r(601), local:r(601);}
+
+{com}. 
+. import delimited $racedatadir/raw/pilot_june_27_2024.csv, varnames(1) clear
+{res}{text}(230 vars, 183 obs)
+
+{com}. 
+. grah bar lm7_hire
+{err}command {bf}grah{sf} is unrecognized
+{txt}{search r(199), local:r(199);}
+
+{com}. graph bar lm7_hire
+{res}
+{com}. set graph on
+
+. graph bar lm7_hire
+{res}
+{com}. graph bar lm7_belief_1 lm7_belief_2
+{res}
+{com}. graph bar lm7_belief_1 lm7_belief_2 if belief_only==1
+{res}
+{com}. graph bar lm7_belief_1 lm7_belief_2 if belief_only==0
+{res}
+{com}. tab belief_only
+
+{txt}belief_only {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+          0 {c |}{res}         92       50.27       50.27
+{txt}          1 {c |}{res}         91       49.73      100.00
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}        183      100.00
+
+{com}. graph bar v203 v204
+{res}
+{com}. graph bar v203 v204
+{res}
+{com}. graph bar lm7_belief_1 lm7_belief_2 if belief_only==0
+{res}
+{com}. graph bar lm7_hire
+{res}
+{com}. graph bar lm7_belief_1 lm7_belief_2
+{res}
+{com}. graph bar v203 v204
+{res}
+{com}. graph bar lm7_belief_1 lm7_belief_2
+{res}
+{com}. graph bar v214 v215
+{res}
+{com}. graph bar lm8_belief_1 lm8_belief_2
+{res}
+{com}. graph bar lm6_belief_1 lm6_belief_2
+{res}
+{com}. graph bar lm1_belief_1 lm1_belief_2
+{res}
+{com}. graph bar lm7_belief_1 lm7_belief_2
+{res}
+{com}. graph bar v192 v193
+{res}
+{com}. tab lm7_hire belief_only
+
+           {txt}{c |} belief_onl
+           {c |}     y
+  lm7_hire {c |}         0 {c |}     Total
+{hline 11}{c +}{hline 11}{c +}{hline 10}
+         1 {c |}{res}        44 {txt}{c |}{res}        44 
+{txt}         2 {c |}{res}        15 {txt}{c |}{res}        15 
+{txt}{hline 11}{c +}{hline 11}{c +}{hline 10}
+     Total {c |}{res}        59 {txt}{c |}{res}        59 
+
+
+{com}. ttest v203== v204
+
+{txt}Paired t test
+{hline 9}{c TT}{hline 68}
+Variable{col 10}{c |}{col 16}Obs{col 27}Mean{col 35}Std. Err.{col 47}Std. Dev.{col 59}[95% Conf. Interval]
+{hline 9}{c +}{hline 68}
+    v203 {c |}{res}{col 12}     59{col 22} 21.20339{col 34} .5458411{col 46} 4.192685{col 58} 20.11077{col 70} 22.29601
+    {txt}v204 {c |}{res}{col 12}     59{col 22} 18.38983{col 34} .4919082{col 46} 3.778419{col 58} 17.40517{col 70} 19.37449
+{txt}{hline 9}{c +}{hline 68}
+    diff {c |}{res}{col 12}     59{col 22} 2.813559{col 34}  .535406{col 46} 4.112532{col 58} 1.741828{col 70} 3.885291
+{txt}{hline 9}{c BT}{hline 68}
+     mean(diff) = mean({res}v203{txt} - {res}v204{txt})                               t = {res}  5.2550
+{txt} Ho: mean(diff) = 0                              degrees of freedom = {res}      58
+
+ {txt}Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = {res}1.0000         {txt}Pr(|T| > |t|) = {res}0.0000          {txt}Pr(T > t) = {res}0.0000
+
+{com}. ttest v203- v204 == lm7_belief_1-lm7_belief_2
+{err}== invalid name
+{txt}{search r(198), local:r(198);}
+
+{com}. ttest (v203- v204) == (lm7_belief_1-lm7_belief_2)
+{err}== invalid name
+{txt}{search r(198), local:r(198);}
+
+{com}. ttest (v203- v204) = (lm7_belief_1-lm7_belief_2)
+{err}too many variables specified
+{txt}{search r(103), local:r(103);}
+
+{com}. gen testbelief1 = lm7_belief_1
+{txt}(131 missing values generated)
+
+{com}. gen testbelief2 = lm7_belief_2
+{txt}(131 missing values generated)
+
+{com}. sum lm7_belief_1 lm7_belief_2
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+lm7_belief_1 {c |}{res}         52    19.05769    4.317831         10         26
+{txt}lm7_belief_2 {c |}{res}         52    16.88462    3.755539          7         24
+
+{com}. ttest testbelief1 == testbelief2
+
+{txt}Paired t test
+{hline 9}{c TT}{hline 68}
+Variable{col 10}{c |}{col 16}Obs{col 27}Mean{col 35}Std. Err.{col 47}Std. Dev.{col 59}[95% Conf. Interval]
+{hline 9}{c +}{hline 68}
+testbe~1 {c |}{res}{col 12}     52{col 22} 19.05769{col 34} .5987754{col 46} 4.317831{col 58}  17.8556{col 70} 20.25978
+{txt}testbe~2 {c |}{res}{col 12}     52{col 22} 16.88462{col 34} .5207995{col 46} 3.755539{col 58} 15.83907{col 70} 17.93016
+{txt}{hline 9}{c +}{hline 68}
+    diff {c |}{res}{col 12}     52{col 22} 2.173077{col 34} .5393429{col 46} 3.889257{col 58} 1.090301{col 70} 3.255853
+{txt}{hline 9}{c BT}{hline 68}
+     mean(diff) = mean({res}testbelief1{txt} - {res}testbelief2{txt})                 t = {res}  4.0291
+{txt} Ho: mean(diff) = 0                              degrees of freedom = {res}      51
+
+ {txt}Ha: mean(diff) < 0           Ha: mean(diff) != 0           Ha: mean(diff) > 0
+ Pr(T < t) = {res}0.9999         {txt}Pr(|T| > |t|) = {res}0.0002          {txt}Pr(T > t) = {res}0.0001
+
+{com}. replace testbelief1 = v203 if testbelief1==.
+{txt}(59 real changes made)
+
+{com}. replace testbelief2 = v204 if testbelief2==.
+{txt}(59 real changes made)
+
+{com}. gen testdiff = testbelief1 - testbelief2
+{txt}(72 missing values generated)
+
+{com}. reg testdiff belief_only
+
+{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}       111
+{txt}{hline 13}{c +}{hline 34}   F(1, 109)       = {res}     0.71
+{txt}       Model {c |} {res} 11.3382695         1  11.3382695   {txt}Prob > F        ={res}    0.4029
+{txt}    Residual {c |} {res} 1752.39146       109  16.0769859   {txt}R-squared       ={res}    0.0064
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}   -0.0027
+{txt}       Total {c |} {res} 1763.72973       110  16.0339066   {txt}Root MSE        =   {res} 4.0096
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}    testdiff{col 14}{c |}      Coef.{col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 1}belief_only {c |}{col 14}{res}{space 2}-.6404824{col 26}{space 2} .7626691{col 37}{space 1}   -0.84{col 46}{space 3}0.403{col 54}{space 4}-2.152068{col 67}{space 3} .8711029
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} 2.813559{col 26}{space 2}  .522007{col 37}{space 1}    5.39{col 46}{space 3}0.000{col 54}{space 4} 1.778958{col 67}{space 3}  3.84816
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{com}. ttest testdiff, by(belief_only)
+
+{txt}Two-sample t test with equal variances
+{hline 9}{c TT}{hline 68}
+   Group{col 10}{c |}{col 16}Obs{col 27}Mean{col 35}Std. Err.{col 47}Std. Dev.{col 59}[95% Conf. Interval]
+{hline 9}{c +}{hline 68}
+       0 {c |}{res}{col 12}     59{col 22} 2.813559{col 34}  .535406{col 46} 4.112532{col 58} 1.741828{col 70} 3.885291
+       {txt}1 {c |}{res}{col 12}     52{col 22} 2.173077{col 34} .5393429{col 46} 3.889257{col 58} 1.090301{col 70} 3.255853
+{txt}{hline 9}{c +}{hline 68}
+combined {c |}{res}{col 12}    111{col 22} 2.513514{col 34} .3800653{col 46} 4.004236{col 58} 1.760313{col 70} 3.266714
+{txt}{hline 9}{c +}{hline 68}
+    diff {c |}{res}{col 22} .6404824{col 34} .7626691{col 58}-.8711029{col 70} 2.152068
+{txt}{hline 9}{c BT}{hline 68}
+    diff = mean({res}0{txt}) - mean({res}1{txt})                                      t = {res}  0.8398
+{txt}Ho: diff = 0                                     degrees of freedom = {res}     109
+
+    {txt}Ha: diff < 0                 Ha: diff != 0                 Ha: diff > 0
+ Pr(T < t) = {res}0.7986         {txt}Pr(|T| > |t|) = {res}0.4029          {txt}Pr(T > t) = {res}0.2014
+
+{com}. sum lm7_belief_1 lm7_belief_2
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+lm7_belief_1 {c |}{res}         52    19.05769    4.317831         10         26
+{txt}lm7_belief_2 {c |}{res}         52    16.88462    3.755539          7         24
+
+{com}. sum testbelief1 testbelief2, by(belief_only)
+{err}option {bf:by()} not allowed
+{txt}{search r(198), local:r(198);}
+
+{com}. tabstat testbelief1 testbelief2, by(belief_only)
+
+{txt}Summary statistics: mean
+  by categories of: belief_only 
+
+{ralign 11:belief_only} {...}
+{c |}{...}
+  testbe~1  testbe~2
+{hline 12}{c +}{hline 20}
+{ralign 11:0} {...}
+{c |}{...}
+ {res} 21.20339  18.38983
+{txt}{ralign 11:1} {...}
+{c |}{...}
+ {res} 19.05769  16.88462
+{txt}{hline 12}{c +}{hline 20}
+{ralign 11:Total} {...}
+{c |}{...}
+ {res}  20.1982  17.68468
+{txt}{hline 12}{c BT}{hline 20}
+
+{com}. sum lm8_belief_1 lm8_belief_2
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+lm8_belief_1 {c |}{res}         52    18.82692    3.993726         12         28
+{txt}lm8_belief_2 {c |}{res}         52    17.01923    3.232739         10         24
+
+{com}. sum v214 v215
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 8}v214 {c |}{res}         59    21.05085    4.492997         11         30
+{txt}{space 8}v215 {c |}{res}         59    17.77966     4.36707          7         29
+
+{com}. sum lm6_belief_1 lm6_belief_2
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+lm6_belief_1 {c |}{res}         52          19    4.182128         11         28
+{txt}lm6_belief_2 {c |}{res}         52    16.55769    3.488994          5         22
+
+{com}. sum v192 v193
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 8}v192 {c |}{res}         59    20.88136    4.752802         12         30
+{txt}{space 8}v193 {c |}{res}         59    18.11864    4.026142         10         27
+
+{com}. 
