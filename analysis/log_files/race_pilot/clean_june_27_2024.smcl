@@ -1,9 +1,9 @@
 {smcl}
 {com}{sf}{ul off}{txt}{.-}
       name:  {res}<unnamed>
-       {txt}log:  {res}D:\Programs\Dropbox\github_repos\belief_distortion\analysis/log_files/race_pilot/clean_june_27_2024.smcl
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/race_pilot/clean_june_27_2024.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}27 Jun 2024, 16:20:21
+ {txt}opened on:  {res}12 Jul 2024, 13:55:20
 {txt}
 {com}. 
 . graph drop _all
@@ -112,15 +112,31 @@
 (56 real changes made)
 {res}{txt}
 {com}. 
-. 
+. rename lm1_* wmbm_*
+{res}{txt}
+{com}. rename lm2_* wfbf_*
+{res}{txt}
+{com}. rename lm3_* wmhm_*
+{res}{txt}
+{com}. rename lm4_* wmam_*
+{res}{txt}
+{com}. rename lm5_* ambm_*
+{res}{txt}
+{com}. rename lm6_* amhm_*
+{res}{txt}
+{com}. rename lm7_* afbm_*
+{res}{txt}
+{com}. rename lm8_* afhm_*
+{res}{txt}
+{com}. 
 . 
 . 
 . 
 . log close 
       {txt}name:  {res}<unnamed>
-       {txt}log:  {res}D:\Programs\Dropbox\github_repos\belief_distortion\analysis/log_files/race_pilot/clean_june_27_2024.smcl
+       {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/race_pilot/clean_june_27_2024.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}27 Jun 2024, 16:20:21
+ {txt}closed on:  {res}12 Jul 2024, 13:55:23
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}
