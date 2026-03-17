@@ -222,7 +222,7 @@ def gen_matrix_pairs(mat_dim, n_pairs, set_num):
     paths = Paths(
         folder_path="./gen_matrix/graphs/discrete_normal",
         folder_name=f"set_{set_num}_dim_{mat_dim}_pairs_{n_pairs}",
-        hosting_path="/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/asset_hosting_service/matrix_graphs/discrete_normal"
+        hosting_path="/Users/christinasun/github_repos/asset_hosting_service/matrix_graphs/discrete_normal"
     )
 
     html_data = HTML_Strings(

@@ -182,13 +182,13 @@ def draw(canvas_dim, matrix_dim, p, save_path, file_name_shell, top_half):
 
 # testing code
 
-# draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half= True)
+# draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half= True)
 
-# draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half= True)
+# draw(canvas_dim= 400, matrix_dim= 10, p = 0.5, save_path='/Users/christinasun/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half= True)
 
-# draw(canvas_dim= 400, matrix_dim= 20, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half=False)
+# draw(canvas_dim= 400, matrix_dim= 20, p = 0.5, save_path='/Users/christinasun/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half=False)
 
-# draw(canvas_dim= 400, matrix_dim= 20, p = 0.5, save_path='/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half=False)
+# draw(canvas_dim= 400, matrix_dim= 20, p = 0.5, save_path='/Users/christinasun/github_repos/belief_distortion/gen_matrix/graphs/half', file_name_shell = 'dim_{}_r_{}', top_half=False)
 
 
 
@@ -196,7 +196,7 @@ def draw(canvas_dim, matrix_dim, p, save_path, file_name_shell, top_half):
 ###################################################
 # a function to draw n pairs of matrices
 def draw_n_pairs(canvas_dim, matrix_dim, n, p):
-    dir = '/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/gen_matrix/graphs'
+    dir = '/Users/christinasun/github_repos/belief_distortion/gen_matrix/graphs'
     file_prefix_shell = 'pair_{}_mat_{}_'
     file_name_shell = 'dim_{}_r_{}'
     # create a folder for graphs and handle already exist error

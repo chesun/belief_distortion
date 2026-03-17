@@ -7,7 +7,7 @@ if c(hostname) == "scribe" {
 }
 else if c(os) == "MacOSX" & c(username) == "christinasun" {
     global datadir "/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local"
-    global projdir "/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis"
+    global projdir "/Users/christinasun/github_repos/belief_distortion/analysis"
     global racedatadir "/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion_discrimination/data_local"
     cd $projdir
     di "Personal Macbook settings set correctly"
