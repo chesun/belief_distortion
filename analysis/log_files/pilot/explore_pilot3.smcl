@@ -3,7 +3,7 @@
       name:  {res}<unnamed>
        {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/explore_pilot3.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}24 Jun 2024, 13:19:38
+ {txt}opened on:  {res} 1 May 2025, 17:53:05
 {txt}
 {com}. 
 . graph drop _all
@@ -20,6 +20,7 @@
 {txt}
 {com}. 
 . import delimited $datadir/raw/pilot_3_feb_7_2024_import_ready.csv, varnames(1) clear
+{res}{txt}(encoding automatically selected: ISO-8859-1)
 {res}{text}(1,969 vars, 11 obs)
 
 {com}. 
@@ -123,7 +124,7 @@
 {txt}
 {com}. sum win_bonus
 
-{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
 {hline 13}{c +}{hline 57}
 {space 3}win_bonus {c |}{res}          9           4           0          4          4
 {txt}
@@ -136,7 +137,7 @@
 {com}. keep responseid prolific_pid earned_game_bonus earned_belief_bonus earned_invest_bonus
 {txt}
 {com}. export delimited using $datadir/clean/pilot3_bonus.csv, replace 
-{res}{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot3_bonus.csv saved
+{res}{txt}file {bf:/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot3_bonus.csv} saved
 
 {com}. restore
 {txt}
@@ -151,12 +152,12 @@
 >     actual_red_a_round actual_red_b_round ///
 >     guess_2_a_round guess_2_b_round ///
 >     invest_round success_round, i(responseid) j(round)
-{txt}(note: j = 1 2 3 4 5 6 7 8 9 10 11 12)
+{txt}(j = 1 2 3 4 5 6 7 8 9 10 11 12)
 
-Data{col 36}wide{col 43}->{col 48}long
+Data{col 36}Wide{col 43}->{col 48}Long
 {hline 77}
-Number of obs.                 {res}       9   {txt}->{res}     108
-{txt}Number of variables            {res}     126   {txt}->{res}      17
+Number of observations     {res}           9   {txt}->   {res}108         
+{txt}Number of variables        {res}         126   {txt}->   {res}17          
 {txt}j variable (12 values)                    ->   {res}round
 {txt}xij variables:
 {res}treat_loop1 treat_loop2 ... treat_loop12  {txt}->   {res}treat_loop
@@ -204,36 +205,41 @@ success_round1 success_round2 ... success_round12{txt}->{res}success_round
 . 
 . ranksum guess_1_b, by(treat_loop)
 
-{txt}Two-sample Wilcoxon rank-sum (Mann-Whitney) test
+{txt}Two-sample Wilcoxon rank-sum (Mann–Whitney) test
 
-  treat_loop {c |}      obs    rank sum    expected
+  treat_loop {c |}      Obs    Rank sum    Expected
 {hline 13}{c +}{hline 33}
     baseline {c |}{res}{col 17}     66{col 26}      3384{col 38}      3597
      {txt}control {c |}{res}{col 17}     42{col 26}      2502{col 38}      2289
 {txt}{hline 13}{c +}{hline 33}
-    combined {c |}{res}{col 17}    108{col 26}      5886{col 38}      5886
+    Combined {c |}{res}{col 17}    108{col 26}      5886{col 38}      5886
 
-{txt}unadjusted variance{col 22}{res}  25179.00
-{txt}adjustment for ties{col 22}{res}   -148.96
+{txt}Unadjusted variance{col 22}{res}  25179.00
+{txt}Adjustment for ties{col 22}{res}   -148.96
 {txt}{col 22}{hline 10}
-adjusted variance{col 22}{res}  25030.04
+Adjusted variance{col 22}{res}  25030.04
 
-{txt}Ho: gues~1_b(treat_~p==baseline) = gues~1_b(treat_~p==control)
-{col 14}z = {res} -1.346
-{txt}{col 5}Prob > |z| = {res}  0.1782
+{txt}H0: gues~1_b(treat_~p==baseline) = gues~1_b(treat_~p==control)
+{col 10}z = {res}{ralign 6:-1.346}
+{txt}{col 1}Prob > |z| = {res}{ralign 6:0.1782}
+{txt}{col 1}Exact prob = {res}{ralign 6:0.1795}
 {txt}
 {com}. 
 . 
 . 
 . save $datadir/clean/pilot_3_clean.dta, replace
-{txt}file /Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_3_clean.dta saved
+{txt}{p 0 4 2}
+file {bf}
+/Users/christinasun/Library/CloudStorage/Dropbox/Davis/Research_Projects/belief_distortion/data_local/clean/pilot_3_clean.dta{rm}
+saved
+{p_end}
 
 {com}. 
 . log close 
       {txt}name:  {res}<unnamed>
        {txt}log:  {res}/Users/christinasun/Library/CloudStorage/Dropbox/github_repos/belief_distortion/analysis/log_files/pilot/explore_pilot3.smcl
   {txt}log type:  {res}smcl
- {txt}closed on:  {res}24 Jun 2024, 13:19:39
+ {txt}closed on:  {res} 1 May 2025, 17:53:06
 {txt}{.-}
 {smcl}
 {txt}{sf}{ul off}
